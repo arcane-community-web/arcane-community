@@ -10,15 +10,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons (JS) -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- FullCalendar -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js" defer></script>
+
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
 </head>
 <body>
 
-  <!-- ===== WELCOME BANNER (muncul 3 detik lalu hilang) ===== -->
+  <!-- ===== WELCOME BANNER ===== -->
   <div class="welcome-banner" id="welcomeBanner">
     <div class="container">
       <div class="welcome-inner">
@@ -38,7 +43,7 @@
   <header class="navbar">
     <div class="container nav-inner">
       <a href="#home" class="brand">
-        <img src="assets/logo.png" alt="ARCANE Logo" class="brand-logo" width="38" height="38" />
+        <img src="assets/logo.png" alt="ARCANE Logo" class="brand-logo" width="36" height="36" />
         <span class="brand-name">ARCANE</span>
       </a>
 
@@ -56,16 +61,16 @@
           <span id="langLabel">EN</span>
         </button>
         <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
-          <i class="lucide-moon" id="themeIcon"></i>
+          <i data-lucide="moon" id="themeIcon"></i>
         </button>
         <a href="admin.html" class="icon-btn" id="adminBtn" style="display:none;" title="Dashboard">
-          <i class="lucide-layout-dashboard"></i>
+          <i data-lucide="layout-dashboard"></i>
         </a>
         <button class="icon-btn" id="logoutBtn" style="display:none;" title="Logout">
-          <i class="lucide-log-out"></i>
+          <i data-lucide="log-out"></i>
         </button>
         <button class="menu-btn" id="menuBtn" aria-label="Menu">
-          <i class="lucide-menu"></i>
+          <i data-lucide="menu"></i>
         </button>
       </div>
     </div>
@@ -87,7 +92,7 @@
         </div>
       </div>
       <div class="hero-visual">
-        <img src="assets/logo.png" alt="ARCANE" width="420" height="420" />
+        <img src="assets/logo.png" alt="ARCANE" width="280" height="280" />
       </div>
     </div>
   </section>
@@ -118,27 +123,27 @@
 
       <div class="services-grid">
         <div class="service-card reveal">
-          <div class="service-icon"><i class="lucide-file-text"></i></div>
+          <div class="service-icon"><i data-lucide="file-text"></i></div>
           <h3 data-i18n="services.doc.title">Edit Dokumen</h3>
           <p data-i18n="services.doc.desc">Perapian format, pengetikan, dan penyuntingan dokumen.</p>
         </div>
         <div class="service-card reveal">
-          <div class="service-icon"><i class="lucide-calendar-days"></i></div>
+          <div class="service-icon"><i data-lucide="calendar-days"></i></div>
           <h3 data-i18n="services.schedule.title">Edit Jadwal</h3>
           <p data-i18n="services.schedule.desc">Pembuatan & perapian jadwal pelajaran atau kegiatan.</p>
         </div>
         <div class="service-card reveal">
-          <div class="service-icon"><i class="lucide-pen-tool"></i></div>
+          <div class="service-icon"><i data-lucide="pen-tool"></i></div>
           <h3 data-i18n="services.logo.title">Desain Logo</h3>
           <p data-i18n="services.logo.desc">Pembuatan logo modern & minimalis untuk komunitas atau brand.</p>
         </div>
         <div class="service-card reveal">
-          <div class="service-icon"><i class="lucide-image"></i></div>
+          <div class="service-icon"><i data-lucide="image"></i></div>
           <h3 data-i18n="services.image.title">Edit Gambar</h3>
           <p data-i18n="services.image.desc">Retouch, komposisi, dan desain grafis sederhana.</p>
         </div>
         <div class="service-card reveal">
-          <div class="service-icon"><i class="lucide-video"></i></div>
+          <div class="service-icon"><i data-lucide="video"></i></div>
           <h3 data-i18n="services.video.title">Edit Video</h3>
           <p data-i18n="services.video.desc">Editing video untuk konten sekolah, acara, atau promosi.</p>
         </div>
@@ -188,7 +193,7 @@
   <footer class="footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <img src="assets/logo.png" alt="ARCANE" width="52" height="52" />
+        <img src="assets/logo.png" alt="ARCANE" width="48" height="48" />
         <p data-i18n="footer.tagline">Informasi. Kreativitas. Komunitas.</p>
       </div>
       <div class="footer-links">
@@ -237,15 +242,12 @@
           const role = data.role || 'member';
           const roleDisplay = ROLE_DISPLAY[role] || role;
 
-          // Tampilkan tombol
           logoutBtn.style.display = 'flex';
-          if (role === 'owner' || role === 'admin') {
+          if (role === 'owner' || role === 'operator') {
             adminBtn.style.display = 'flex';
           }
 
-          // Tampilkan banner sambutan
           showWelcomeBanner(username, roleDisplay, role);
-
         } catch (e) {
           console.error('Gagal ambil data user:', e);
         }
@@ -256,7 +258,6 @@
       }
     });
 
-    // ===== Banner sambutan (3 detik lalu fade out) =====
     function showWelcomeBanner(username, roleDisplay, role) {
       const banner = document.getElementById('welcomeBanner');
       const usernameEl = document.getElementById('welcomeUsername');
@@ -264,8 +265,6 @@
       if (!banner) return;
 
       usernameEl.textContent = username;
-
-      // Owner: role = username, nggak perlu tanda kurung
       if (role === 'owner') {
         roleEl.style.display = 'none';
       } else {
@@ -273,10 +272,7 @@
         roleEl.style.display = 'inline-block';
       }
 
-      // Muncul
       setTimeout(() => banner.classList.add('visible'), 100);
-
-      // Hilang setelah 3 detik
       setTimeout(() => {
         banner.classList.remove('visible');
         setTimeout(() => banner.remove(), 600);
@@ -286,6 +282,11 @@
     document.getElementById('logoutBtn')?.addEventListener('click', async () => {
       await signOut(auth);
       window.location.href = 'login.html';
+    });
+
+    // Init Lucide setelah DOM siap
+    window.addEventListener('load', () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     });
   </script>
 
