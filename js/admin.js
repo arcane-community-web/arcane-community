@@ -3,21 +3,23 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, doc, getDoc, getDocs,
-  addDoc, updateDoc, deleteDoc, serverTimestamp
+  addDoc, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import {
-  getStorage, ref, uploadBytes, getDownloadURL, deleteObject
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let currentUser = null;
 
-// ===== Cek Auth + Role Admin =====
+// Init Lucide
+function refreshIcons() {
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+window.addEventListener('load', refreshIcons);
+
+// ===== Cek Auth + Role =====
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = 'login.html';
@@ -25,19 +27,18 @@ onAuthStateChanged(auth, async (user) => {
   }
   const userDoc = await getDoc(doc(db, 'users', user.uid));
   const role = userDoc.exists() ? userDoc.data().role : 'member';
-  if (role !== 'admin') {
+  if (role !== 'owner' && role !== 'operator') {
     alert('Akses ditolak. Halaman ini hanya untuk admin.');
     window.location.href = 'index.html';
     return;
   }
   currentUser = user;
-  document.getElementById('adminUser').textContent = user.email;
 
-  // Load data awal
   loadStats();
   loadNews();
   loadEvents();
   loadGallery();
+  refreshIcons();
 });
 
 // ===== Logout =====
@@ -85,6 +86,7 @@ function openModal(title, fields, onSubmit) {
     closeModal();
   };
   modal.classList.add('open');
+  refreshIcons();
 }
 function closeModal() {
   modal.classList.remove('open');
@@ -102,12 +104,12 @@ async function loadNews() {
   list.innerHTML = items.length ? items.map(item => `
     <div class="admin-item">
       <div class="admin-item-info">
-        <h4>${item.title_id || item.title?.id || '(tanpa judul)'}</h4>
-        <p>${item.date || ''} — ${item.excerpt_id || item.excerpt?.id || ''}</p>
+        <h4>${item.title_id || ''}</h4>
+        <p>${item.date || ''} — ${item.excerpt_id || ''}</p>
       </div>
       <div class="admin-item-actions">
-        <button data-id="${item.id}" class="edit-news"><i class="lucide-pencil"></i></button>
-        <button data-id="${item.id}" class="delete-news danger"><i class="lucide-trash-2"></i></button>
+        <button data-id="${item.id}" class="edit-news"><i data-lucide="pencil"></i></button>
+        <button data-id="${item.id}" class="delete-news danger"><i data-lucide="trash-2"></i></button>
       </div>
     </div>
   `).join('') : '<p style="color:var(--text-mute)">Belum ada berita.</p>';
@@ -118,6 +120,7 @@ async function loadNews() {
   list.querySelectorAll('.delete-news').forEach(btn => {
     btn.addEventListener('click', () => deleteNews(btn.dataset.id));
   });
+  refreshIcons();
 }
 
 document.getElementById('addNewsBtn')?.addEventListener('click', () => newsForm());
@@ -163,12 +166,12 @@ async function loadEvents() {
   list.innerHTML = items.length ? items.map(item => `
     <div class="admin-item">
       <div class="admin-item-info">
-        <h4>${item.title_id || item.title?.id || '(tanpa judul)'}</h4>
+        <h4>${item.title_id || ''}</h4>
         <p>${item.start || ''}</p>
       </div>
       <div class="admin-item-actions">
-        <button data-id="${item.id}" class="edit-event"><i class="lucide-pencil"></i></button>
-        <button data-id="${item.id}" class="delete-event danger"><i class="lucide-trash-2"></i></button>
+        <button data-id="${item.id}" class="edit-event"><i data-lucide="pencil"></i></button>
+        <button data-id="${item.id}" class="delete-event danger"><i data-lucide="trash-2"></i></button>
       </div>
     </div>
   `).join('') : '<p style="color:var(--text-mute)">Belum ada acara.</p>';
@@ -179,6 +182,7 @@ async function loadEvents() {
   list.querySelectorAll('.delete-event').forEach(btn => {
     btn.addEventListener('click', () => deleteEvent(btn.dataset.id));
   });
+  refreshIcons();
 }
 
 document.getElementById('addEventBtn')?.addEventListener('click', () => eventForm());
@@ -222,53 +226,35 @@ async function loadGallery() {
   list.innerHTML = items.length ? items.map(item => `
     <div class="admin-gallery-item">
       <img src="${item.src}" alt="${item.caption_id || ''}" loading="lazy" />
-      <button class="delete-btn delete-gallery" data-id="${item.id}" data-src="${item.src}">
-        <i class="lucide-trash-2"></i>
+      <button class="delete-btn delete-gallery" data-id="${item.id}">
+        <i data-lucide="trash-2"></i>
       </button>
     </div>
   `).join('') : '<p style="color:var(--text-mute)">Belum ada gambar.</p>';
 
   list.querySelectorAll('.delete-gallery').forEach(btn => {
-    btn.addEventListener('click', () => deleteGallery(btn.dataset.id, btn.dataset.src));
+    btn.addEventListener('click', () => deleteGallery(btn.dataset.id));
   });
+  refreshIcons();
 }
 
 document.getElementById('addGalleryBtn')?.addEventListener('click', () => galleryForm());
 
 function galleryForm() {
   const fields = `
-    <div><label>Upload Gambar</label><input name="file" type="file" accept="image/*" required /></div>
+    <div><label>URL Gambar</label><input name="src" placeholder="https://..." required /></div>
     <div><label>Caption (ID)</label><input name="caption_id" required /></div>
     <div><label>Caption (EN)</label><input name="caption_en" required /></div>
   `;
-  openModal('Upload Gambar', fields, async (fd) => {
-    const file = fd.get('file');
-    const caption_id = fd.get('caption_id');
-    const caption_en = fd.get('caption_en');
-
-    // Upload ke Storage
-    const storageRef = ref(storage, `gallery/${Date.now()}_${file.name}`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-
-    // Simpan ke Firestore
-    await addDoc(collection(db, 'gallery'), {
-      src: url,
-      caption_id, caption_en,
-      storagePath: storageRef.fullPath
-    });
+  openModal('Tambah Gambar', fields, async (fd) => {
+    const obj = Object.fromEntries(fd.entries());
+    await addDoc(collection(db, 'gallery'), obj);
     loadGallery(); loadStats();
   });
 }
 
-async function deleteGallery(id, src) {
+async function deleteGallery(id) {
   if (!confirm('Hapus gambar ini?')) return;
-  const snap = await getDoc(doc(db, 'gallery', id));
-  if (snap.exists() && snap.data().storagePath) {
-    try {
-      await deleteObject(ref(storage, snap.data().storagePath));
-    } catch (e) { console.warn('Gagal hapus file Storage:', e); }
-  }
   await deleteDoc(doc(db, 'gallery', id));
   loadGallery(); loadStats();
 }
