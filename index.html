@@ -32,14 +32,14 @@
   <!-- ===== WEB ===== -->
   <div class="web" id="web">
 
-    <!-- ===== WELCOME BANNER (diisi JS) ===== -->
+    <!-- ===== WELCOME BANNER ===== -->
     <div class="welcome-banner" id="welcomeBanner">
       <div class="welcome-inner">
         <span class="welcome-icon">✨</span>
         <div class="welcome-text">
           <h1 class="welcome-title">Welcome, <span id="welcomeUsername">User</span></h1>
           <span class="welcome-role" id="welcomeRole" style="display:none;">(Role)</span>
-          <p class="welcome-sub">Selamat datang di ARCANE Community</p>
+          <p class="welcome-sub" data-i18n="welcome.sub">Selamat datang di ARCANE Community</p>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
     <!-- ===== SIDEBAR OVERLAY ===== -->
     <aside class="sidebar-overlay" id="sidebar">
       <div class="sidebar-header">
-        <h2>Dashboard</h2>
+        <h2 data-i18n="dash.title">Dashboard</h2>
         <button class="sidebar-close" id="closeSidebar" title="Tutup sidebar">
           <i data-lucide="x"></i>
         </button>
@@ -79,32 +79,32 @@
 
       <nav class="sidebar-nav">
         <button class="sidebar-nav-item active" data-page="statistik">
-          <i data-lucide="bar-chart-3"></i> <span>Statistik</span>
+          <i data-lucide="bar-chart-3"></i> <span data-i18n="dash.statistik">Statistik</span>
         </button>
         <button class="sidebar-nav-item" data-page="berita">
-          <i data-lucide="newspaper"></i> <span>Berita</span>
+          <i data-lucide="newspaper"></i> <span data-i18n="dash.berita">Berita</span>
         </button>
         <button class="sidebar-nav-item" data-page="acara">
-          <i data-lucide="calendar-days"></i> <span>Acara</span>
+          <i data-lucide="calendar-days"></i> <span data-i18n="dash.acara">Acara</span>
         </button>
         <button class="sidebar-nav-item" data-page="galeri">
-          <i data-lucide="image"></i> <span>Galeri</span>
+          <i data-lucide="image"></i> <span data-i18n="dash.galeri">Galeri</span>
         </button>
         <button class="sidebar-nav-item" data-page="pengaturan">
-          <i data-lucide="settings"></i> <span>Pengaturan</span>
+          <i data-lucide="settings"></i> <span data-i18n="dash.pengaturan">Pengaturan</span>
         </button>
         <button class="sidebar-nav-item" data-page="console">
-          <i data-lucide="terminal"></i> <span>Console</span>
+          <i data-lucide="terminal"></i> <span data-i18n="dash.console">Console</span>
           <span class="log-badge" id="logBadge"></span>
         </button>
 
         <div class="sidebar-divider"></div>
 
         <button class="sidebar-nav-item" id="backToWeb">
-          <i data-lucide="globe"></i> <span>Web Utama</span>
+          <i data-lucide="globe"></i> <span data-i18n="dash.web">Web Utama</span>
         </button>
         <button class="sidebar-nav-item danger" id="sidebarLogout">
-          <i data-lucide="log-out"></i> <span>Logout</span>
+          <i data-lucide="log-out"></i> <span data-i18n="dash.logout">Logout</span>
         </button>
       </nav>
     </aside>
@@ -164,35 +164,35 @@
             <img src="assets/logo.png" alt="ARCANE" onerror="this.style.display='none'" />
             <p data-i18n="footer.tagline">Informasi. Kreativitas. Komunitas.</p>
           </div>
-          <p class="footer-copy">© <span id="year"></span> ARCANE Community. <span data-i18n="footer.rights">All rights reserved.</span></p>
+          <p class="footer-copy">© <span id="year"></span> ARCANE Community. <span data-i18n="footer.rights">Hak cipta dilindungi.</span></p>
         </footer>
 
       </div>
 
       <!-- ===== STATISTIK ===== -->
       <div class="page" data-page-content="statistik">
-        <h1>Statistik</h1>
-        <p class="page-sub">Ringkasan konten ARCANE Community</p>
+        <h1 data-i18n="stat.title">Statistik</h1>
+        <p class="page-sub" data-i18n="stat.desc">Ringkasan konten ARCANE Community</p>
         <div class="stats-grid">
           <div class="stat-card">
             <i data-lucide="newspaper"></i>
             <div>
               <span class="stat-num" id="statNews">0</span>
-              <span class="stat-label">Berita</span>
+              <span class="stat-label" data-i18n="stat.news">Berita</span>
             </div>
           </div>
           <div class="stat-card">
             <i data-lucide="calendar-days"></i>
             <div>
               <span class="stat-num" id="statEvents">0</span>
-              <span class="stat-label">Acara</span>
+              <span class="stat-label" data-i18n="stat.events">Acara</span>
             </div>
           </div>
           <div class="stat-card">
             <i data-lucide="image"></i>
             <div>
               <span class="stat-num" id="statGallery">0</span>
-              <span class="stat-label">Gambar</span>
+              <span class="stat-label" data-i18n="stat.gallery">Gambar</span>
             </div>
           </div>
         </div>
@@ -202,11 +202,11 @@
       <div class="page" data-page-content="berita">
         <div class="page-header">
           <div>
-            <h1>Berita</h1>
-            <p class="page-sub">Kelola berita ARCANE Community</p>
+            <h1 data-i18n="admin.news.title">Berita</h1>
+            <p class="page-sub" data-i18n="admin.news.desc">Kelola berita ARCANE Community</p>
           </div>
           <button class="btn btn-primary" id="addNewsBtn">
-            <i data-lucide="plus"></i> Tambah Berita
+            <i data-lucide="plus"></i> <span data-i18n="admin.news.add">Tambah Berita</span>
           </button>
         </div>
         <div class="admin-list" id="adminNewsList"></div>
@@ -216,11 +216,11 @@
       <div class="page" data-page-content="acara">
         <div class="page-header">
           <div>
-            <h1>Acara</h1>
-            <p class="page-sub">Kelola acara ARCANE Community</p>
+            <h1 data-i18n="admin.events.title">Acara</h1>
+            <p class="page-sub" data-i18n="admin.events.desc">Kelola acara ARCANE Community</p>
           </div>
           <button class="btn btn-primary" id="addEventBtn">
-            <i data-lucide="plus"></i> Tambah Acara
+            <i data-lucide="plus"></i> <span data-i18n="admin.events.add">Tambah Acara</span>
           </button>
         </div>
         <div class="admin-list" id="adminEventsList"></div>
@@ -230,11 +230,11 @@
       <div class="page" data-page-content="galeri">
         <div class="page-header">
           <div>
-            <h1>Galeri</h1>
-            <p class="page-sub">Kelola galeri ARCANE Community</p>
+            <h1 data-i18n="admin.gallery.title">Galeri</h1>
+            <p class="page-sub" data-i18n="admin.gallery.desc">Kelola galeri ARCANE Community</p>
           </div>
           <button class="btn btn-primary" id="addGalleryBtn">
-            <i data-lucide="plus"></i> Upload Gambar
+            <i data-lucide="plus"></i> <span data-i18n="admin.gallery.add">Upload Gambar</span>
           </button>
         </div>
         <div class="admin-gallery" id="adminGalleryList"></div>
@@ -242,7 +242,7 @@
 
       <!-- ===== PENGATURAN ===== -->
       <div class="page" data-page-content="pengaturan">
-        <h1>Pengaturan</h1>
+        <h1 data-i18n="dash.pengaturan">Pengaturan</h1>
         <p class="page-sub">Pengaturan situs ARCANE Community</p>
         <div class="dummy-card">
           <h3>Nama Web</h3>
@@ -260,15 +260,15 @@
 
       <!-- ===== CONSOLE ===== -->
       <div class="page" data-page-content="console">
-        <h1>Console Log</h1>
-        <p class="page-sub">Log aktivitas & error sistem</p>
+        <h1 data-i18n="console.title">Console Log</h1>
+        <p class="page-sub" data-i18n="console.desc">Log aktivitas & error sistem</p>
 
         <div class="log-filter">
-          <button class="log-filter-btn active" data-filter="all">Semua</button>
-          <button class="log-filter-btn" data-filter="success">Sukses</button>
-          <button class="log-filter-btn" data-filter="warning">Warning</button>
-          <button class="log-filter-btn" data-filter="error">Error</button>
-          <button class="log-clear-btn" id="clearLogs">Clear</button>
+          <button class="log-filter-btn active" data-filter="all" data-i18n="console.filter.all">Semua</button>
+          <button class="log-filter-btn" data-filter="success" data-i18n="console.filter.success">Sukses</button>
+          <button class="log-filter-btn" data-filter="warning" data-i18n="console.filter.warning">Warning</button>
+          <button class="log-filter-btn" data-filter="error" data-i18n="console.filter.error">Error</button>
+          <button class="log-clear-btn" id="clearLogs" data-i18n="console.clear">Clear</button>
         </div>
 
         <div class="log-list" id="logList"></div>
@@ -289,8 +289,8 @@
       </div>
       <div class="modal-body" id="modalBody"></div>
       <div class="modal-footer" id="modalFooter">
-        <button type="button" class="modal-btn ghost" id="modalCancel">Batal</button>
-        <button type="button" class="modal-btn primary" id="modalSave">Simpan</button>
+        <button type="button" class="modal-btn ghost" id="modalCancel" data-i18n="modal.cancel">Batal</button>
+        <button type="button" class="modal-btn primary" id="modalSave" data-i18n="modal.save">Simpan</button>
       </div>
     </div>
   </div>
@@ -368,6 +368,12 @@
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
   </script>
+
+  <!-- ===== THEME ===== -->
+  <script src="js/theme.js"></script>
+
+  <!-- ===== LANG ===== -->
+  <script src="js/lang.js"></script>
 
   <!-- ===== LOGGER ===== -->
   <script src="js/logger.js"></script>
