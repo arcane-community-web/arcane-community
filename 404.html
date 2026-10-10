@@ -2,35 +2,36 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ARCANE — Redirecting...</title>
   <meta name="robots" content="noindex, nofollow">
   <script>
     (function() {
-      // Simpan path asli sebelum redirect
       var path = location.pathname + location.search + location.hash;
       try {
         sessionStorage.setItem('arcane-redirect', path);
       } catch (e) {}
-      
       // Redirect ke root
       var base = '/arcane-community/';
       location.replace(base);
     })();
   </script>
   <style>
-    body {
-      font-family: -apple-system, 'Segoe UI', sans-serif;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       background: #0A0A0A;
       color: #00FF00;
+      font-family: 'Courier New', monospace;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
-      font-family: 'Courier New', monospace;
+    }
+    .msg {
+      text-align: center;
       font-size: 14px;
     }
-    .msg { text-align: center; }
   </style>
 </head>
 <body>
