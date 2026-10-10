@@ -142,7 +142,7 @@ button {
 
 /* ===== 4. WEB & WELCOME BANNER ===== */
 .web {
-  opacity: 0;
+  opacity: 1;
   transition: opacity .5s ease;
 }
 .web.visible { opacity: 1; }
