@@ -1,11 +1,11 @@
 // ===== INIT — ARCANE =====
-// Init semua — dipanggil setelah loading selesai
+// Init semua — tanpa loading screen
 
 (function() {
   'use strict';
 
   function initAll() {
-    console.log('[ARCANE] Mulai init setelah loading');
+    console.log('[ARCANE] Mulai init');
 
     // 1. Render data dummy
     if (window.ArcaneRenderPublic) {
@@ -54,21 +54,19 @@
       }, 3000);
     };
 
-    // 5. Trigger event — arcane-ready
+    // 5. Tampilkan web (langsung)
+    const web = document.getElementById('web');
+    if (web) web.classList.add('visible');
+
+    // 6. Trigger arcane-ready
     window.dispatchEvent(new Event('arcane-ready'));
     console.log('[ARCANE] Event arcane-ready dipicu');
 
     console.log('[ARCANE] Init selesai');
   }
 
-  // ===== Tunggu loading selesai =====
   document.addEventListener('DOMContentLoaded', function() {
     console.log('[ARCANE] Halaman dimuat');
-
-    if (window.ArcaneLoading) {
-      window.ArcaneLoading.start(initAll);
-    } else {
-      initAll();
-    }
+    initAll();
   });
 })();
