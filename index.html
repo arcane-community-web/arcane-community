@@ -18,17 +18,6 @@
 </head>
 <body>
 
-  <!-- ===== LOADING SCREEN ===== -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-card">
-      <div class="terminal-header">
-        <span class="title">ARCANE</span>
-        <span class="version">v1.0</span>
-      </div>
-      <div class="terminal-body" id="terminalBody"></div>
-    </div>
-  </div>
-
   <!-- ===== WEB ===== -->
   <div class="web" id="web">
 
@@ -160,10 +149,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-          <div class="footer-brand">
-            <img src="assets/logo.png" alt="ARCANE" onerror="this.style.display='none'" />
-            <p data-i18n="footer.tagline">Informasi. Kreativitas. Komunitas.</p>
-          </div>
+          <p class="footer-tagline" data-i18n="footer.tagline">Informasi. Kreativitas. Komunitas.</p>
           <p class="footer-copy">© <span id="year"></span> ARCANE Community. <span data-i18n="footer.rights">Hak cipta dilindungi.</span></p>
         </footer>
 
@@ -315,20 +301,16 @@
     const ROLE_DISPLAY = { owner: 'ArcZeyn', operator: 'Operator', member: 'Member' };
     const DASHBOARD_ROLES = ['owner', 'operator'];
 
-    // Flag — biar auth nunggu loading selesai
     window.arcaneReady = false;
 
-    // Expose ke global
     window.ArcaneAuth = { auth, db, ROLE_DISPLAY, DASHBOARD_ROLES };
 
-    // ===== Event listener — tunggu arcane-ready =====
     window.addEventListener('arcane-ready', function() {
       window.arcaneReady = true;
       console.log('[Auth] Arcane ready — cek auth');
       handleAuth(auth.currentUser);
     });
 
-    // ===== Listener auth — kalau user login/logout =====
     onAuthStateChanged(auth, function(user) {
       if (!window.arcaneReady) {
         console.log('[Auth] Belum ready — tunggu');
@@ -337,7 +319,6 @@
       handleAuth(user);
     });
 
-    // ===== Fungsi handle auth =====
     async function handleAuth(user) {
       const logoutBtn = document.getElementById('logoutBtn');
       const sidebarLogout = document.getElementById('sidebarLogout');
@@ -376,7 +357,6 @@
       }
     }
 
-    // ===== Logout =====
     function doLogout() {
       sessionStorage.removeItem('arcane-welcome-shown');
       console.log('[Auth] Logout');
@@ -388,7 +368,6 @@
     document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
     document.getElementById('sidebarLogout')?.addEventListener('click', doLogout);
 
-    // ===== Lucide =====
     window.addEventListener('load', function() {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
@@ -411,9 +390,6 @@
 
   <!-- ===== RENDER ADMIN ===== -->
   <script src="js/render-admin.js"></script>
-
-  <!-- ===== LOADING ===== -->
-  <script src="js/loading.js"></script>
 
   <!-- ===== DASHBOARD ===== -->
   <script src="js/dashboard.js"></script>
