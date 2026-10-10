@@ -11,10 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Lucide Icons (JS) -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- FullCalendar -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js" defer></script>
 
@@ -230,6 +228,9 @@
       member:   'Member'
     };
 
+    // Role yang boleh lihat tombol dashboard
+    const DASHBOARD_ROLES = ['owner', 'operator'];
+
     onAuthStateChanged(auth, async (user) => {
       const logoutBtn = document.getElementById('logoutBtn');
       const adminBtn = document.getElementById('adminBtn');
@@ -239,11 +240,11 @@
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           const data = userDoc.exists() ? userDoc.data() : {};
           const username = data.username || user.email.split('@')[0];
-          const role = data.role || 'member';
+          const role = String(data.role || 'member').toLowerCase().trim();
           const roleDisplay = ROLE_DISPLAY[role] || role;
 
           logoutBtn.style.display = 'flex';
-          if (role === 'owner' || role === 'operator') {
+          if (DASHBOARD_ROLES.includes(role)) {
             adminBtn.style.display = 'flex';
           }
 
@@ -284,7 +285,6 @@
       window.location.href = 'login.html';
     });
 
-    // Init Lucide setelah DOM siap
     window.addEventListener('load', () => {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });

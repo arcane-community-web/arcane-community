@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Lucide Icons (JS) -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <link rel="stylesheet" href="css/style.css" />
@@ -141,13 +140,14 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const ALLOWED_ROLES = ['owner', 'operator'];
+
     const ROLE_DISPLAY = {
       owner:    'ArcZeyn',
       operator: 'Operator',
       member:   'Member'
     };
 
-    // Init Lucide
     window.addEventListener('load', () => {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
@@ -160,9 +160,11 @@
 
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       const data = userDoc.exists() ? userDoc.data() : {};
-      const role = data.role || 'member';
+      const role = String(data.role || '').toLowerCase().trim();
 
-      if (role !== 'owner' && role !== 'operator') {
+      console.log('[Dashboard] Role terdeteksi:', role);
+
+      if (!ALLOWED_ROLES.includes(role)) {
         alert('Akses ditolak. Halaman ini hanya untuk admin.');
         window.location.href = 'index.html';
         return;
