@@ -3,6 +3,7 @@
   --blue:        #1E9BE0;
   --blue-dark:   #157BB5;
   --black:       #0A0A0A;
+  --sidebar-bg: #0A0A0A;
 
   --bg:          #FFFFFF;
   --bg-alt:      #F5F7FA;
@@ -32,6 +33,7 @@ html[data-theme="dark"] {
   --navbar-bg:   rgba(15,17,21,.9);
   --shadow:      0 8px 30px rgba(0,0,0,.4);
   --shadow-lg:   0 20px 60px rgba(0,0,0,.6);
+  --sidebar-bg: #050608;
 }
 
 /* ===== RESET & BASE ===== */
@@ -334,7 +336,7 @@ html[data-theme="dark"] .brand-logo {
   left: 0;
   bottom: 0;
   width: 240px;
-  background: #0A0A0A;
+  background: var(--sidebar-bg, #0A0A0A);
   z-index: 80;
   transform: translateX(-100%);
   transition: transform .35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1105,6 +1107,8 @@ html[data-theme="dark"] .brand-logo {
   margin-top: 12px;
   white-space: pre-wrap;
   word-break: break-word;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 .log-detail .label { color: #6B7280; }
 .log-detail .value { color: #00FF00; }
