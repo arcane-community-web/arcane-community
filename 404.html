@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>ARCANE — Redirecting...</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script>
+    (function() {
+      // Simpan path asli sebelum redirect
+      var path = location.pathname + location.search + location.hash;
+      try {
+        sessionStorage.setItem('arcane-redirect', path);
+      } catch (e) {}
+      
+      // Redirect ke root
+      var base = '/arcane-community/';
+      location.replace(base);
+    })();
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, 'Segoe UI', sans-serif;
+      background: #0A0A0A;
+      color: #00FF00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .msg { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="msg">
+    <p>&gt; Redirecting to ARCANE...</p>
+  </div>
+</body>
+</html>

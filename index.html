@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -18,195 +18,290 @@
 </head>
 <body>
 
-  <!-- ===== WELCOME BANNER ===== -->
-  <div class="welcome-banner" id="welcomeBanner">
-    <div class="container">
+  <!-- ===== LOADING SCREEN ===== -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-card">
+      <div class="terminal-header">
+        <span class="title">ARCANE</span>
+        <span class="version">v1.0</span>
+      </div>
+      <div class="terminal-body" id="terminalBody"></div>
+    </div>
+  </div>
+
+  <!-- ===== WEB ===== -->
+  <div class="web" id="web">
+
+    <!-- ===== WELCOME BANNER (diisi JS) ===== -->
+    <div class="welcome-banner" id="welcomeBanner">
       <div class="welcome-inner">
         <span class="welcome-icon">✨</span>
         <div class="welcome-text">
-          <h1 class="welcome-title">
-            Welcome, <span id="welcomeUsername">User</span>
-          </h1>
+          <h1 class="welcome-title">Welcome, <span id="welcomeUsername">User</span></h1>
           <span class="welcome-role" id="welcomeRole" style="display:none;">(Role)</span>
           <p class="welcome-sub">Selamat datang di ARCANE Community</p>
         </div>
       </div>
     </div>
+
+    <!-- ===== NAVBAR GLOBAL ===== -->
+    <header class="navbar">
+      <div class="nav-inner">
+        <a class="brand" id="brandHome">
+          <img src="assets/logo.png" alt="ARCANE" class="brand-logo" onerror="this.style.display='none'" />
+          <span class="brand-name">ARCANE</span>
+        </a>
+        <div class="nav-actions">
+          <button class="icon-btn" id="langToggle" title="Bahasa">
+            <span id="langLabel">EN</span>
+          </button>
+          <button class="icon-btn" id="themeToggle" title="Tema">
+            <i data-lucide="moon" id="themeIcon"></i>
+          </button>
+          <button class="icon-btn" id="toggleSidebar" title="Dashboard">
+            <i data-lucide="layout-dashboard"></i>
+          </button>
+          <button class="icon-btn" id="logoutBtn" title="Logout">
+            <i data-lucide="log-out"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== SIDEBAR OVERLAY ===== -->
+    <aside class="sidebar-overlay" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Dashboard</h2>
+        <button class="sidebar-close" id="closeSidebar" title="Tutup sidebar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-nav-item active" data-page="statistik">
+          <i data-lucide="bar-chart-3"></i> <span>Statistik</span>
+        </button>
+        <button class="sidebar-nav-item" data-page="berita">
+          <i data-lucide="newspaper"></i> <span>Berita</span>
+        </button>
+        <button class="sidebar-nav-item" data-page="acara">
+          <i data-lucide="calendar-days"></i> <span>Acara</span>
+        </button>
+        <button class="sidebar-nav-item" data-page="galeri">
+          <i data-lucide="image"></i> <span>Galeri</span>
+        </button>
+        <button class="sidebar-nav-item" data-page="pengaturan">
+          <i data-lucide="settings"></i> <span>Pengaturan</span>
+        </button>
+        <button class="sidebar-nav-item" data-page="console">
+          <i data-lucide="terminal"></i> <span>Console</span>
+          <span class="log-badge" id="logBadge"></span>
+        </button>
+
+        <div class="sidebar-divider"></div>
+
+        <button class="sidebar-nav-item" id="backToWeb">
+          <i data-lucide="globe"></i> <span>Web Utama</span>
+        </button>
+        <button class="sidebar-nav-item danger" id="sidebarLogout">
+          <i data-lucide="log-out"></i> <span>Logout</span>
+        </button>
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- ===== KONTEN ===== -->
+    <main class="content" id="contentArea">
+
+      <!-- ===== WEB PUBLIK ===== -->
+      <div class="page active" data-page-content="home">
+
+        <!-- Hero -->
+        <section class="hero">
+          <span class="hero-badge" data-i18n="hero.badge">Komunitas Informasi & Digital</span>
+          <h1 data-i18n="hero.title">Informasi. Kreativitas. Komunitas.</h1>
+          <p data-i18n="hero.subtitle">ARCANE Community berbagi informasi sekolah dan menyediakan jasa digital untuk anggota maupun publik.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" data-goto="berita" data-i18n="hero.cta1">Lihat Berita</button>
+            <button class="btn btn-ghost" data-i18n="hero.cta2">Tentang Kami</button>
+          </div>
+        </section>
+
+        <!-- Berita -->
+        <section class="section">
+          <div class="section-head">
+            <span class="section-tag" data-i18n="news.tag">Info Sekolah</span>
+            <h2 data-i18n="news.title">Berita & Informasi Terbaru</h2>
+            <p data-i18n="news.desc">Update seputar kegiatan, pengumuman, dan informasi sekolah.</p>
+          </div>
+          <div class="news-grid" id="newsGrid"></div>
+        </section>
+
+        <!-- Acara -->
+        <section class="section section-alt">
+          <div class="section-head">
+            <span class="section-tag" data-i18n="events.tag">Acara</span>
+            <h2 data-i18n="events.title">Acara Mendatang</h2>
+            <p data-i18n="events.desc">Jadwal kegiatan dan acara ARCANE Community.</p>
+          </div>
+          <div class="events-list" id="eventsList"></div>
+        </section>
+
+        <!-- Galeri -->
+        <section class="section">
+          <div class="section-head">
+            <span class="section-tag" data-i18n="gallery.tag">Galeri</span>
+            <h2 data-i18n="gallery.title">Momen & Karya</h2>
+            <p data-i18n="gallery.desc">Dokumentasi kegiatan dan hasil karya ARCANE Community.</p>
+          </div>
+          <div class="gallery-grid" id="galleryGrid"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="footer-brand">
+            <img src="assets/logo.png" alt="ARCANE" onerror="this.style.display='none'" />
+            <p data-i18n="footer.tagline">Informasi. Kreativitas. Komunitas.</p>
+          </div>
+          <p class="footer-copy">© <span id="year"></span> ARCANE Community. <span data-i18n="footer.rights">All rights reserved.</span></p>
+        </footer>
+
+      </div>
+
+      <!-- ===== STATISTIK ===== -->
+      <div class="page" data-page-content="statistik">
+        <h1>Statistik</h1>
+        <p class="page-sub">Ringkasan konten ARCANE Community</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i data-lucide="newspaper"></i>
+            <div>
+              <span class="stat-num" id="statNews">0</span>
+              <span class="stat-label">Berita</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i data-lucide="calendar-days"></i>
+            <div>
+              <span class="stat-num" id="statEvents">0</span>
+              <span class="stat-label">Acara</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i data-lucide="image"></i>
+            <div>
+              <span class="stat-num" id="statGallery">0</span>
+              <span class="stat-label">Gambar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BERITA ===== -->
+      <div class="page" data-page-content="berita">
+        <div class="page-header">
+          <div>
+            <h1>Berita</h1>
+            <p class="page-sub">Kelola berita ARCANE Community</p>
+          </div>
+          <button class="btn btn-primary" id="addNewsBtn">
+            <i data-lucide="plus"></i> Tambah Berita
+          </button>
+        </div>
+        <div class="admin-list" id="adminNewsList"></div>
+      </div>
+
+      <!-- ===== ACARA ===== -->
+      <div class="page" data-page-content="acara">
+        <div class="page-header">
+          <div>
+            <h1>Acara</h1>
+            <p class="page-sub">Kelola acara ARCANE Community</p>
+          </div>
+          <button class="btn btn-primary" id="addEventBtn">
+            <i data-lucide="plus"></i> Tambah Acara
+          </button>
+        </div>
+        <div class="admin-list" id="adminEventsList"></div>
+      </div>
+
+      <!-- ===== GALERI ===== -->
+      <div class="page" data-page-content="galeri">
+        <div class="page-header">
+          <div>
+            <h1>Galeri</h1>
+            <p class="page-sub">Kelola galeri ARCANE Community</p>
+          </div>
+          <button class="btn btn-primary" id="addGalleryBtn">
+            <i data-lucide="plus"></i> Upload Gambar
+          </button>
+        </div>
+        <div class="admin-gallery" id="adminGalleryList"></div>
+      </div>
+
+      <!-- ===== PENGATURAN ===== -->
+      <div class="page" data-page-content="pengaturan">
+        <h1>Pengaturan</h1>
+        <p class="page-sub">Pengaturan situs ARCANE Community</p>
+        <div class="dummy-card">
+          <h3>Nama Web</h3>
+          <p>ARCANE Community</p>
+        </div>
+        <div class="dummy-card">
+          <h3>Tagline</h3>
+          <p>Informasi. Kreativitas. Komunitas.</p>
+        </div>
+        <div class="dummy-card">
+          <h3>Versi</h3>
+          <p>v1.0 — Preview</p>
+        </div>
+      </div>
+
+      <!-- ===== CONSOLE ===== -->
+      <div class="page" data-page-content="console">
+        <h1>Console Log</h1>
+        <p class="page-sub">Log aktivitas & error sistem</p>
+
+        <div class="log-filter">
+          <button class="log-filter-btn active" data-filter="all">Semua</button>
+          <button class="log-filter-btn" data-filter="success">Sukses</button>
+          <button class="log-filter-btn" data-filter="warning">Warning</button>
+          <button class="log-filter-btn" data-filter="error">Error</button>
+          <button class="log-clear-btn" id="clearLogs">Clear</button>
+        </div>
+
+        <div class="log-list" id="logList"></div>
+      </div>
+
+    </main>
+
   </div>
 
-  <!-- ===== NAVBAR ===== -->
-  <header class="navbar">
-    <div class="container nav-inner">
-      <a href="#home" class="brand">
-        <img src="assets/logo.png" alt="ARCANE Logo" class="brand-logo" width="36" height="36" />
-        <span class="brand-name">ARCANE</span>
-      </a>
-
-      <nav class="nav-links" id="navLinks">
-        <a href="#home"     data-i18n="nav.home">Beranda</a>
-        <a href="#about"    data-i18n="nav.about">Tentang</a>
-        <a href="#services" data-i18n="nav.services">Layanan</a>
-        <a href="#news"     data-i18n="nav.news">Info</a>
-        <a href="#events"   data-i18n="nav.events">Acara</a>
-        <a href="#gallery"  data-i18n="nav.gallery">Galeri</a>
-      </nav>
-
-      <div class="nav-actions">
-        <button class="icon-btn" id="langToggle" aria-label="Switch language">
-          <span id="langLabel">EN</span>
-        </button>
-        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
-          <i data-lucide="moon" id="themeIcon"></i>
-        </button>
-        <a href="admin.html" class="icon-btn" id="adminBtn" style="display:none;" title="Dashboard">
-          <i data-lucide="layout-dashboard"></i>
-        </a>
-        <button class="icon-btn" id="logoutBtn" style="display:none;" title="Logout">
-          <i data-lucide="log-out"></i>
-        </button>
-        <button class="menu-btn" id="menuBtn" aria-label="Menu">
-          <i data-lucide="menu"></i>
+  <!-- ===== MODAL ===== -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Form</h2>
+        <button class="modal-close" id="modalClose" aria-label="Tutup">
+          <i data-lucide="x"></i>
         </button>
       </div>
-    </div>
-  </header>
-
-  <!-- ===== HERO ===== -->
-  <section class="hero" id="home">
-    <div class="container hero-inner">
-      <div class="hero-text">
-        <span class="badge" data-i18n="hero.badge">Komunitas Informasi & Digital</span>
-        <h1 data-i18n="hero.title">Informasi. Kreativitas. Komunitas.</h1>
-        <p data-i18n="hero.subtitle">
-          ARCANE Community berbagi informasi sekolah dan menyediakan jasa digital
-          untuk anggota maupun publik.
-        </p>
-        <div class="hero-cta">
-          <a href="#services" class="btn btn-primary" data-i18n="hero.cta1">Lihat Layanan</a>
-          <a href="#about" class="btn btn-ghost" data-i18n="hero.cta2">Tentang Kami</a>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <img src="assets/logo.png" alt="ARCANE" width="280" height="280" />
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter">
+        <button type="button" class="modal-btn ghost" id="modalCancel">Batal</button>
+        <button type="button" class="modal-btn primary" id="modalSave">Simpan</button>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ===== ABOUT ===== -->
-  <section class="section" id="about">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-tag" data-i18n="about.tag">Tentang Kami</span>
-        <h2 data-i18n="about.title">Siapa ARCANE?</h2>
-        <p data-i18n="about.desc">
-          ARCANE Community adalah wadah berbagi informasi seputar sekolah dan
-          penyedia jasa digital. Kami percaya informasi yang tepat & desain yang
-          rapi bisa membantu banyak orang.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== SERVICES ===== -->
-  <section class="section section-alt" id="services">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-tag" data-i18n="services.tag">Layanan</span>
-        <h2 data-i18n="services.title">Jasa Digital Kami</h2>
-        <p data-i18n="services.desc">Lima layanan utama yang kami sediakan untuk anggota dan publik.</p>
-      </div>
-
-      <div class="services-grid">
-        <div class="service-card reveal">
-          <div class="service-icon"><i data-lucide="file-text"></i></div>
-          <h3 data-i18n="services.doc.title">Edit Dokumen</h3>
-          <p data-i18n="services.doc.desc">Perapian format, pengetikan, dan penyuntingan dokumen.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon"><i data-lucide="calendar-days"></i></div>
-          <h3 data-i18n="services.schedule.title">Edit Jadwal</h3>
-          <p data-i18n="services.schedule.desc">Pembuatan & perapian jadwal pelajaran atau kegiatan.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon"><i data-lucide="pen-tool"></i></div>
-          <h3 data-i18n="services.logo.title">Desain Logo</h3>
-          <p data-i18n="services.logo.desc">Pembuatan logo modern & minimalis untuk komunitas atau brand.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon"><i data-lucide="image"></i></div>
-          <h3 data-i18n="services.image.title">Edit Gambar</h3>
-          <p data-i18n="services.image.desc">Retouch, komposisi, dan desain grafis sederhana.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon"><i data-lucide="video"></i></div>
-          <h3 data-i18n="services.video.title">Edit Video</h3>
-          <p data-i18n="services.video.desc">Editing video untuk konten sekolah, acara, atau promosi.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== NEWS ===== -->
-  <section class="section" id="news">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-tag" data-i18n="news.tag">Info Sekolah</span>
-        <h2 data-i18n="news.title">Berita & Informasi Terbaru</h2>
-        <p data-i18n="news.desc">Update seputar kegiatan, pengumuman, dan informasi sekolah.</p>
-      </div>
-      <div class="news-grid" id="newsGrid"></div>
-    </div>
-  </section>
-
-  <!-- ===== EVENTS — CARD VIEW ===== -->
-  <section class="section section-alt" id="events">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-tag" data-i18n="events.tag">Acara</span>
-        <h2 data-i18n="events.title">Acara Mendatang</h2>
-        <p data-i18n="events.desc">Jadwal kegiatan dan acara ARCANE Community.</p>
-      </div>
-      <div class="events-list reveal" id="eventsList"></div>
-    </div>
-  </section>
-
-  <!-- ===== GALLERY ===== -->
-  <section class="section" id="gallery">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-tag" data-i18n="gallery.tag">Galeri</span>
-        <h2 data-i18n="gallery.title">Momen & Karya</h2>
-        <p data-i18n="gallery.desc">Dokumentasi kegiatan dan hasil karya ARCANE Community.</p>
-      </div>
-      <div class="gallery-grid" id="galleryGrid"></div>
-    </div>
-  </section>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <img src="assets/logo.png" alt="ARCANE" width="48" height="48" />
-        <p data-i18n="footer.tagline">Informasi. Kreativitas. Komunitas.</p>
-      </div>
-      <div class="footer-links">
-        <a href="#about"    data-i18n="nav.about">Tentang</a>
-        <a href="#services" data-i18n="nav.services">Layanan</a>
-        <a href="#news"     data-i18n="nav.news">Info</a>
-        <a href="#events"   data-i18n="nav.events">Acara</a>
-        <a href="#gallery"  data-i18n="nav.gallery">Galeri</a>
-      </div>
-      <p class="footer-copy">© <span id="year"></span> ARCANE Community. <span data-i18n="footer.rights">All rights reserved.</span></p>
-    </div>
-  </footer>
-
-  <!-- Lightbox -->
+  <!-- ===== LIGHTBOX ===== -->
   <div class="lightbox" id="lightbox">
     <span class="lightbox-close" id="lightboxClose">&times;</span>
     <img src="" alt="" id="lightboxImg" />
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- ===== FIREBASE ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -217,17 +312,15 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const ROLE_DISPLAY = {
-      owner:    'ArcZeyn',
-      operator: 'Operator',
-      member:   'Member'
-    };
-
+    const ROLE_DISPLAY = { owner: 'ArcZeyn', operator: 'Operator', member: 'Member' };
     const DASHBOARD_ROLES = ['owner', 'operator'];
+
+    window.ArcaneAuth = { auth, db, ROLE_DISPLAY, DASHBOARD_ROLES };
 
     onAuthStateChanged(auth, async (user) => {
       const logoutBtn = document.getElementById('logoutBtn');
-      const adminBtn = document.getElementById('adminBtn');
+      const sidebarLogout = document.getElementById('sidebarLogout');
+      const dashBtn = document.getElementById('toggleSidebar');
 
       if (user) {
         try {
@@ -237,70 +330,65 @@
           const role = String(data.role || 'member').toLowerCase().trim();
           const roleDisplay = ROLE_DISPLAY[role] || role;
 
-          logoutBtn.style.display = 'flex';
-          if (DASHBOARD_ROLES.includes(role)) {
-            adminBtn.style.display = 'flex';
+          console.log('[Auth] Login: ' + username + ' (' + roleDisplay + ')');
+
+          window.ArcaneUser = { username, role, roleDisplay, email: user.email, uid: user.uid };
+
+          if (logoutBtn) logoutBtn.style.display = 'flex';
+          if (sidebarLogout) sidebarLogout.style.display = 'flex';
+
+          if (dashBtn && !DASHBOARD_ROLES.includes(role)) {
+            dashBtn.style.display = 'none';
           }
 
-          showWelcomeBanner(username, roleDisplay, role);
+          if (typeof window.showWelcomeBanner === 'function') {
+            window.showWelcomeBanner(username, roleDisplay, role);
+          }
         } catch (e) {
           console.error('Gagal ambil data user:', e);
         }
       } else {
-        logoutBtn.style.display = 'none';
-        adminBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (sidebarLogout) sidebarLogout.style.display = 'none';
+        console.log('[Auth] Belum login — redirect');
         window.location.href = 'login.html';
       }
     });
 
-    // Banner muncul SEKALI per sesi
-    function showWelcomeBanner(username, roleDisplay, role) {
-      const banner = document.getElementById('welcomeBanner');
-      if (!banner) return;
-
-      // Cek: udah pernah muncul di sesi ini?
-      if (sessionStorage.getItem('arcane-welcome-shown') === 'yes') {
-        banner.remove();
-        return;
-      }
-
-      const usernameEl = document.getElementById('welcomeUsername');
-      const roleEl = document.getElementById('welcomeRole');
-
-      usernameEl.textContent = username;
-      if (role === 'owner') {
-        roleEl.style.display = 'none';
-      } else {
-        roleEl.textContent = `(${roleDisplay})`;
-        roleEl.style.display = 'inline-block';
-      }
-
-      sessionStorage.setItem('arcane-welcome-shown', 'yes');
-
-      setTimeout(() => banner.classList.add('visible'), 100);
-      setTimeout(() => {
-        banner.classList.remove('visible');
-        setTimeout(() => banner.remove(), 600);
-      }, 3000);
+    function doLogout() {
+      sessionStorage.removeItem('arcane-welcome-shown');
+      console.log('[Auth] Logout');
+      signOut(auth).then(() => { window.location.href = 'login.html'; });
     }
 
-    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-      sessionStorage.removeItem('arcane-welcome-shown');
-      await signOut(auth);
-      window.location.href = 'login.html';
-    });
+    document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+    document.getElementById('sidebarLogout')?.addEventListener('click', doLogout);
 
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function() {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
   </script>
 
-  <script src="js/lang.js" defer></script>
-  <script src="js/theme.js" defer></script>
-  <script src="js/main.js" defer></script>
-  <script src="js/news.js" defer></script>
-  <script src="js/events.js" defer></script>
-  <script src="js/gallery.js" defer></script>
-  <script src="js/transition.js" defer></script>
+  <!-- ===== LOGGER ===== -->
+  <script src="js/logger.js"></script>
+
+  <!-- ===== DATA DUMMY ===== -->
+  <script src="js/data-dummy.js"></script>
+
+  <!-- ===== RENDER PUBLIC ===== -->
+  <script src="js/render-public.js"></script>
+
+  <!-- ===== RENDER ADMIN ===== -->
+  <script src="js/render-admin.js"></script>
+
+  <!-- ===== LOADING ===== -->
+  <script src="js/loading.js"></script>
+
+  <!-- ===== DASHBOARD ===== -->
+  <script src="js/dashboard.js"></script>
+
+  <!-- ===== INIT ===== -->
+  <script src="js/init.js"></script>
+
 </body>
 </html>
