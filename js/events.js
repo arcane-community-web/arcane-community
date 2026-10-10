@@ -64,9 +64,7 @@ function renderEvents(items) {
   const lang = window.currentLang || 'id';
 
   if (!items.length) {
-    list.innerHTML = renderEmpty(
-      lang === 'id' ? 'Belum ada acara.' : 'No events yet.'
-    );
+    list.innerHTML = renderEmpty();
     observeReveal();
     return;
   }
@@ -103,28 +101,26 @@ function renderEvents(items) {
               <i data-lucide="tag"></i>
               <span class="event-category-badge" style="background: ${cat.color};">${cat.label}</span>
             </div>
-            ${hasLocation || prio ? `
-              <div class="event-location-row">
-                <div class="event-location">
-                  ${hasLocation ? `
-                    <i data-lucide="map-pin"></i>
-                    ${hasMaps
-                      ? `<a href="${item.maps_url}" target="_blank" rel="noopener">${item.location}</a>`
-                      : `<span>${item.location}</span>`
-                    }
-                  ` : `
-                    <i data-lucide="map-pin"></i>
-                    <span style="font-style: italic; opacity: .7;">
-                      ${lang === 'id' ? 'Belum ditentukan' : 'TBA'}
-                    </span>
-                  `}
-                </div>
-                <span class="event-priority" style="color: ${prioColor};">
-                  <i data-lucide="alert-circle"></i>
-                  ${lang === 'id' ? 'Prioritas' : 'Priority'}: ${prio}
-                </span>
+            <div class="event-location-row">
+              <div class="event-location">
+                ${hasLocation ? `
+                  <i data-lucide="map-pin"></i>
+                  ${hasMaps
+                    ? `<a href="${item.maps_url}" target="_blank" rel="noopener">${item.location}</a>`
+                    : `<span>${item.location}</span>`
+                  }
+                ` : `
+                  <i data-lucide="map-pin"></i>
+                  <span style="font-style: italic; opacity: .7;">
+                    ${lang === 'id' ? 'Belum ditentukan' : 'TBA'}
+                  </span>
+                `}
               </div>
-            ` : ''}
+              <span class="event-priority" style="color: ${prioColor};">
+                <i data-lucide="alert-circle"></i>
+                ${lang === 'id' ? 'Prioritas' : 'Priority'}: ${prio}
+              </span>
+            </div>
           </div>
           ${desc ? `<p class="event-desc">${desc}</p>` : ''}
         </div>
@@ -152,12 +148,10 @@ function formatEventDate(start, end, lang) {
   const endDateStr = end.toLocaleDateString(locale, opts);
   const endTimeStr = end.toLocaleTimeString(locale, timeOpts);
 
-  // Kalau tanggal sama
   if (startDateStr === endDateStr) {
     return `<strong>${startDateStr}</strong>, ${startTimeStr} - ${endTimeStr}`;
   }
 
-  // Kalau beda hari
   return `<strong>${startDateStr} - ${endDateStr}</strong>, ${startTimeStr} - ${endTimeStr}`;
 }
 
@@ -191,7 +185,6 @@ async function autoDeleteOldEvents(items) {
       await deleteDoc(doc(db, 'events', item.id));
       console.log('[Auto-delete] Hapus acara lama:', item.title_id || item.id);
     } catch (e) {
-      // Gagal hapus → diam aja (mungkin rules nolak)
       console.warn('[Auto-delete] Gagal hapus:', e.message);
     }
   }
@@ -203,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 });
 
-// Re-load saat ganti bahasa
 document.getElementById('langToggle')?.addEventListener('click', () => {
   setTimeout(loadEvents, 50);
 });
