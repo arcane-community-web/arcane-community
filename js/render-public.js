@@ -115,8 +115,8 @@
             '<div class="event-meta-row"><i data-lucide="calendar"></i><span>' + dateStr + '</span></div>' +
             '<div class="event-meta-row"><i data-lucide="tag"></i><span class="event-category-badge" style="background: ' + cat.color + ';">' + cat.label + '</span></div>' +
             '<div class="event-location-row">' +
-              '<div class="event-location"><i data-lucide="map-pin"></i>' + locationHtml + '</div>' +
-              '<span class="event-priority" style="color: ' + prioColor + ';">'<i data-lucide="alert-circle"></i> ' + (window.ArcaneLang ? window.ArcaneLang.t('events.priority') : 'Prioritas') + ': ' + prio + '</span>' +
+            '<div class="event-location"><i data-lucide="map-pin"></i>' + locationHtml + '</div>' +
+            '<span class="event-priority" style="color: ' + prioColor + ';">'<i data-lucide="alert-circle"></i> ' + (window.ArcaneLang ? window.ArcaneLang.t('events.priority') : 'Prioritas') + ': ' + prio + '</span>' +
             '</div>' +
           '</div>' +
           (desc ? '<p class="event-desc">' + desc + '</p>' : '') +
