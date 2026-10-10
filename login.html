@@ -8,19 +8,172 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Lucide Icons (JS) -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
+
+  <style>
+    /* Style khusus login — biar nggak bentrok sama SPA */
+    .login-body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1E9BE0 0%, #0F1115 100%);
+      padding: 20px;
+      overflow-x: hidden;
+      margin: 0;
+      font-family: var(--font-body, 'Inter', sans-serif);
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 40px 32px 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.3);
+      text-align: center;
+    }
+
+    .login-logo {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      margin: 0 auto 14px;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .login-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0 0 6px;
+      color: #0A0A0A;
+    }
+
+    .login-subtitle {
+      color: #6B7280;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-group > i:first-child {
+      position: absolute;
+      left: 15px;
+      color: #6B7280;
+      font-size: 17px;
+      pointer-events: none;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 13px 44px 13px 44px;
+      border: 1.5px solid #E8E8E8;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14.5px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      transition: .2s;
+      box-sizing: border-box;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #1E9BE0;
+      box-shadow: 0 0 0 3px rgba(30,155,224,.15);
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 11px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6B7280;
+      border-radius: 8px;
+      transition: .2s;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .toggle-pass:hover { color: #1E9BE0; }
+    .toggle-pass i { font-size: 17px; }
+
+    .login-error {
+      color: #E04B1E;
+      font-size: 13px;
+      min-height: 18px;
+      text-align: left;
+      padding-left: 4px;
+    }
+
+    .login-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+      padding: 12px 24px;
+      background: #1E9BE0;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: .2s;
+      font-family: inherit;
+      box-shadow: 0 6px 20px rgba(30,155,224,.3);
+    }
+
+    .login-btn:hover {
+      background: #157BB5;
+      transform: translateY(-2px);
+    }
+
+    .login-btn:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+    }
+
+    .login-footer {
+      margin-top: 26px;
+      font-size: 12.5px;
+      color: #6B7280;
+    }
+  </style>
 </head>
 <body class="login-body">
 
   <div class="login-wrapper">
     <div class="login-card">
-      <img src="assets/logo.png" alt="ARCANE" class="login-logo" />
+      <img src="assets/logo.png" alt="ARCANE" class="login-logo" onerror="this.style.display='none'" />
       <h1 class="login-title">ARCANE</h1>
       <p class="login-subtitle">Masuk untuk melanjutkan</p>
 
@@ -39,7 +192,7 @@
 
         <div class="login-error" id="loginError"></div>
 
-        <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+        <button type="submit" class="login-btn" id="loginBtn">
           <span id="loginBtnText">Masuk</span>
           <i data-lucide="log-in"></i>
         </button>
@@ -60,10 +213,11 @@
     const db = getFirestore(app);
 
     // Init Lucide
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function() {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
 
+    // Kalau udah login → redirect
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
@@ -76,7 +230,7 @@
       }
     });
 
-    // Toggle password visibility
+    // Toggle password
     const togglePass = document.getElementById('togglePass');
     const passInput = document.getElementById('password');
     const eyeIcon = document.getElementById('eyeIcon');
@@ -133,7 +287,5 @@
       }
     });
   </script>
-  
-  <script src="js/transition.js" defer></script>
 </body>
 </html>
