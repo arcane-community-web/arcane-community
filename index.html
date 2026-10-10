@@ -315,9 +315,30 @@
     const ROLE_DISPLAY = { owner: 'ArcZeyn', operator: 'Operator', member: 'Member' };
     const DASHBOARD_ROLES = ['owner', 'operator'];
 
+    // Flag — biar auth nunggu loading selesai
+    window.arcaneReady = false;
+
+    // ===== Expose ke global =====
     window.ArcaneAuth = { auth, db, ROLE_DISPLAY, DASHBOARD_ROLES };
 
-    onAuthStateChanged(auth, async (user) => {
+    // ===== Event listener — tunggu arcane-ready =====
+    window.addEventListener('arcane-ready', function() {
+      window.arcaneReady = true;
+      console.log('[Auth] Arcane ready — cek auth');
+      handleAuth(auth.currentUser);
+    });
+
+    // ===== Listener auth — kalau user login/logout =====
+    onAuthStateChanged(auth, function(user) {
+      if (!window.arcaneReady) {
+        console.log('[Auth] Belum ready — tunggu');
+        return;
+      }
+      handleAuth(user);
+    });
+
+    // ===== Fungsi handle auth =====
+    async function handleAuth(user) {
       const logoutBtn = document.getElementById('logoutBtn');
       const sidebarLogout = document.getElementById('sidebarLogout');
       const dashBtn = document.getElementById('toggleSidebar');
@@ -353,17 +374,21 @@
         console.log('[Auth] Belum login — redirect');
         window.location.href = 'login.html';
       }
-    });
+    }
 
+    // ===== Logout =====
     function doLogout() {
       sessionStorage.removeItem('arcane-welcome-shown');
       console.log('[Auth] Logout');
-      signOut(auth).then(() => { window.location.href = 'login.html'; });
+      signOut(auth).then(function() {
+        window.location.href = 'login.html';
+      });
     }
 
     document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
     document.getElementById('sidebarLogout')?.addEventListener('click', doLogout);
 
+    // ===== Lucide =====
     window.addEventListener('load', function() {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
