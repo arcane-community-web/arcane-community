@@ -1366,3 +1366,40 @@ html[data-theme="dark"] .brand-logo {
   .footer-brand p { font-size: 13px; }
   .footer-copy { font-size: 12px; }
 }
+
+/* ===== SCROLL REVEAL ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger — card muncul berurutan */
+.news-card.reveal,
+.event-card.reveal,
+.gallery-item.reveal {
+  transition-delay: calc(var(--index, 0) * 0.08s);
+}
+
+/* Lazy image */
+img.lazy-img {
+  opacity: 0;
+  transition: opacity .5s ease;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+img.lazy-img.loaded {
+  opacity: 1;
+  animation: none;
+  background: none;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
