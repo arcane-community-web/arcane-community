@@ -174,7 +174,7 @@ async function loadEvents() {
     <div class="admin-item">
       <div class="admin-item-info">
         <h4>${item.title_id || ''}</h4>
-        <p>${item.start || ''}</p>
+        <p>${item.start || ''} — ${item.category || ''} — Prioritas ${item.priority || 3}</p>
       </div>
       <div class="admin-item-actions">
         <button data-id="${item.id}" class="edit-event"><i data-lucide="pencil"></i></button>
@@ -195,15 +195,38 @@ async function loadEvents() {
 document.getElementById('addEventBtn')?.addEventListener('click', () => eventForm());
 
 function eventForm(data = {}) {
+  const categoryOptions = `
+    <option value="sosial"  ${data.category === 'sosial'  ? 'selected' : ''}>Sosial</option>
+    <option value="liburan" ${data.category === 'liburan' ? 'selected' : ''}>Liburan</option>
+    <option value="project" ${data.category === 'project' ? 'selected' : ''}>Project</option>
+    <option value="event"   ${data.category === 'event'   ? 'selected' : ''}>Event</option>
+  `;
+
+  const priorityOptions = [5,4,3,2,1].map(p =>
+    `<option value="${p}" ${Number(data.priority) === p ? 'selected' : ''}>${p}</option>`
+  ).join('');
+
   const fields = `
     <div><label>Judul (ID)</label><input name="title_id" value="${data.title_id || ''}" required /></div>
     <div><label>Judul (EN)</label><input name="title_en" value="${data.title_en || ''}" required /></div>
     <div><label>Mulai</label><input name="start" type="datetime-local" value="${data.start || ''}" required /></div>
-    <div><label>Selesai (opsional)</label><input name="end" type="datetime-local" value="${data.end || ''}" /></div>
-    <div><label>Warna</label><input name="color" type="color" value="${data.color || '#1E9BE0'}" /></div>
+    <div><label>Selesai</label><input name="end" type="datetime-local" value="${data.end || ''}" /></div>
+    <div><label>Deskripsi (ID)</label><textarea name="description_id">${data.description_id || ''}</textarea></div>
+    <div><label>Deskripsi (EN)</label><textarea name="description_en">${data.description_en || ''}</textarea></div>
+    <div>
+      <label>Kategori</label>
+      <select name="category" required>${categoryOptions}</select>
+    </div>
+    <div>
+      <label>Prioritas (1-5)</label>
+      <select name="priority" required>${priorityOptions}</select>
+    </div>
+    <div><label>Lokasi (opsional)</label><input name="location" value="${data.location || ''}" placeholder="Aula Sekolah" /></div>
+    <div><label>Link Google Maps (opsional)</label><input name="maps_url" value="${data.maps_url || ''}" placeholder="https://maps.app.goo.gl/..." /></div>
   `;
   openModal(data.id ? 'Edit Acara' : 'Tambah Acara', fields, async (fd) => {
     const obj = Object.fromEntries(fd.entries());
+    obj.priority = Number(obj.priority) || 3;
     if (data.id) {
       await updateDoc(doc(db, 'events', data.id), obj);
     } else {
