@@ -279,141 +279,183 @@
   window.renderLogs = renderLogs;
   window.updateLogBadge = updateLogBadge;
 
-  // ===== Bind Event =====
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('[Dashboard] Init');
+  // ===== Bind Event — dengan try-catch =====
+  function bindEvents() {
+    console.log('[Dashboard] Bind events');
 
-    const toggleBtn = $('#toggleSidebar');
-    if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
-
-    const closeBtn = $('#closeSidebar');
-    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-
-    const backdrop = $('#sidebarBackdrop');
-    if (backdrop) backdrop.addEventListener('click', closeSidebar);
-
-    // Menu navigasi
-    $$('.sidebar-nav-item[data-page]').forEach(function(item) {
-      item.addEventListener('click', function() {
-        $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
-        item.classList.add('active');
-        showPage(item.dataset.page);
-        if (window.innerWidth <= 768) {
-          setTimeout(closeSidebar, 200);
-        }
-      });
-    });
-
-    // Data-goto
-    $$('[data-goto]').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const target = btn.dataset.goto;
-        $$('.sidebar-nav-item').forEach(function(i) {
-          i.classList.remove('active');
-          if (i.dataset.page === target) i.classList.add('active');
-        });
-        showPage(target);
-      });
-    });
-
-    // Web Utama
-    const backBtn = $('#backToWeb');
-    if (backBtn) {
-      backBtn.addEventListener('click', function() {
-        console.log('[Dashboard] Balik ke Web Utama');
-        $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
-        showPage('home');
-      });
-    }
-
-    // Brand
-    const brand = $('#brandHome');
-    if (brand) {
-      brand.addEventListener('click', function() {
-        $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
-        showPage('home');
-      });
-    }
-
-    // Modal
-    const modalClose = $('#modalClose');
-    if (modalClose) modalClose.addEventListener('click', closeModal);
-
-    const modalCancel = $('#modalCancel');
-    if (modalCancel) modalCancel.addEventListener('click', closeModal);
-
-    const modalSave = $('#modalSave');
-    if (modalSave) {
-      modalSave.addEventListener('click', function() {
-        const form = document.querySelector('#modalBody form');
-        if (form) {
-          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-        }
-      });
-    }
-
-    const modal = $('#modal');
-    if (modal) {
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-      });
-    }
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    // Filter log
-    $$('.log-filter-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        $$('.log-filter-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderLogs();
-      });
-    });
-
-    // Clear log
-    const clearBtn = $('#clearLogs');
-    if (clearBtn) {
-      clearBtn.addEventListener('click', function() {
-        confirmDialog('Hapus semua log?', function() {
-          if (window.ArcaneLogger) window.ArcaneLogger.clear();
-          renderLogs();
-          updateLogBadge();
-        });
-      });
-    }
-
-    // Lightbox
-    const lbClose = $('#lightboxClose');
-    if (lbClose) {
-      lbClose.addEventListener('click', function() {
-        const box = $('#lightbox');
-        if (box) box.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    }
-    const lb = $('#lightbox');
-    if (lb) {
-      lb.addEventListener('click', function(e) {
-        if (e.target === lb) {
-          lb.classList.remove('open');
-          document.body.style.overflow = '';
-        }
-      });
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        const box = $('#lightbox');
-        if (box && box.classList.contains('open')) {
-          box.classList.remove('open');
-          document.body.style.overflow = '';
-        }
+    try {
+      // Toggle sidebar
+      const toggleBtn = $('#toggleSidebar');
+      if (toggleBtn) {
+        toggleBtn.onclick = function(e) {
+          e.preventDefault();
+          toggleSidebar();
+        };
+        console.log('[Dashboard] toggleSidebar bound');
+      } else {
+        console.warn('[Dashboard] toggleSidebar NOT FOUND');
       }
-    });
 
-    renderLogs();
-    updateLogBadge();
-  });
+      // Close sidebar
+      const closeBtn = $('#closeSidebar');
+      if (closeBtn) {
+        closeBtn.onclick = function(e) {
+          e.preventDefault();
+          closeSidebar();
+        };
+      }
+
+      // Backdrop
+      const backdrop = $('#sidebarBackdrop');
+      if (backdrop) {
+        backdrop.onclick = function(e) {
+          e.preventDefault();
+          closeSidebar();
+        };
+      }
+
+      // Menu navigasi
+      $$('.sidebar-nav-item[data-page]').forEach(function(item) {
+        item.onclick = function(e) {
+          e.preventDefault();
+          $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
+          item.classList.add('active');
+          showPage(item.dataset.page);
+          if (window.innerWidth <= 768) {
+            setTimeout(closeSidebar, 200);
+          }
+        };
+      });
+
+      // Data-goto
+      $$('[data-goto]').forEach(function(btn) {
+        btn.onclick = function(e) {
+          e.preventDefault();
+          const target = btn.dataset.goto;
+          $$('.sidebar-nav-item').forEach(function(i) {
+            i.classList.remove('active');
+            if (i.dataset.page === target) i.classList.add('active');
+          });
+          showPage(target);
+        };
+      });
+
+      // Web Utama
+      const backBtn = $('#backToWeb');
+      if (backBtn) {
+        backBtn.onclick = function(e) {
+          e.preventDefault();
+          console.log('[Dashboard] Balik ke Web Utama');
+          $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
+          showPage('home');
+        };
+      }
+
+      // Brand
+      const brand = $('#brandHome');
+      if (brand) {
+        brand.onclick = function(e) {
+          e.preventDefault();
+          $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
+          showPage('home');
+        };
+      }
+
+      // Modal close
+      const modalClose = $('#modalClose');
+      if (modalClose) modalClose.onclick = closeModal;
+
+      const modalCancel = $('#modalCancel');
+      if (modalCancel) modalCancel.onclick = closeModal;
+
+      // Modal save
+      const modalSave = $('#modalSave');
+      if (modalSave) {
+        modalSave.onclick = function() {
+          const form = document.querySelector('#modalBody form');
+          if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }
+        };
+      }
+
+      // Modal backdrop
+      const modal = $('#modal');
+      if (modal) {
+        modal.onclick = function(e) {
+          if (e.target === modal) closeModal();
+        };
+      }
+
+      // ESC
+      document.onkeydown = function(e) {
+        if (e.key === 'Escape') {
+          closeModal();
+          const box = $('#lightbox');
+          if (box && box.classList.contains('open')) {
+            box.classList.remove('open');
+            document.body.style.overflow = '';
+          }
+        }
+      };
+
+      // Filter log
+      $$('.log-filter-btn').forEach(function(btn) {
+        btn.onclick = function() {
+          $$('.log-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          renderLogs();
+        };
+      });
+
+      // Clear log
+      const clearBtn = $('#clearLogs');
+      if (clearBtn) {
+        clearBtn.onclick = function() {
+          confirmDialog('Hapus semua log?', function() {
+            if (window.ArcaneLogger) window.ArcaneLogger.clear();
+            renderLogs();
+            updateLogBadge();
+          });
+        };
+      }
+
+      // Lightbox close
+      const lbClose = $('#lightboxClose');
+      if (lbClose) {
+        lbClose.onclick = function() {
+          const box = $('#lightbox');
+          if (box) box.classList.remove('open');
+          document.body.style.overflow = '';
+        };
+      }
+
+      const lb = $('#lightbox');
+      if (lb) {
+        lb.onclick = function(e) {
+          if (e.target === lb) {
+            lb.classList.remove('open');
+            document.body.style.overflow = '';
+          }
+        };
+      }
+
+      // Render log awal
+      renderLogs();
+      updateLogBadge();
+
+      console.log('[Dashboard] Semua event ter-bind');
+    } catch (e) {
+      console.error('[Dashboard] Error bind:', e);
+    }
+  }
+
+  // ===== Init — DOMContentLoaded =====
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindEvents);
+  } else {
+    // DOM udah siap — langsung bind
+    bindEvents();
+  }
 })();
