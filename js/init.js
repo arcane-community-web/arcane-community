@@ -4,15 +4,11 @@
 (function() {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('[ARCANE] Halaman dimuat');
+  // ===== Fungsi init semua =====
+  function initAll() {
+    console.log('[ARCANE] Mulai init setelah loading');
 
-    // 1. Loading screen
-    if (window.ArcaneLoading) {
-      window.ArcaneLoading.start();
-    }
-
-    // 2. Render data dummy
+    // 1. Render data dummy
     if (window.ArcaneRenderPublic) {
       window.ArcaneRenderPublic.renderAll();
     }
@@ -20,31 +16,14 @@
       window.ArcaneRenderAdmin.renderAll();
     }
 
-    // 3. Year di footer
+    // 2. Year di footer
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    // 4. Lucide icons
+    // 3. Lucide icons
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
-    // 5. Banner welcome (dibikin kalau nggak ada)
-    if (!document.getElementById('welcomeBanner')) {
-      const wb = document.createElement('div');
-      wb.className = 'welcome-banner';
-      wb.id = 'welcomeBanner';
-      wb.innerHTML = 
-        '<div class="welcome-inner">' +
-          '<span class="welcome-icon">✨</span>' +
-          '<div class="welcome-text">' +
-            '<h1 class="welcome-title">Welcome, <span id="welcomeUsername">User</span></h1>' +
-            '<span class="welcome-role" id="welcomeRole" style="display:none;">(Role)</span>' +
-            '<p class="welcome-sub">Selamat datang di ARCANE Community</p>' +
-          '</div>' +
-        '</div>';
-      document.body.insertBefore(wb, document.body.firstChild);
-    }
-
-    // 6. Banner welcome function (expose)
+    // 4. Expose showWelcomeBanner
     window.showWelcomeBanner = function(username, roleDisplay, role) {
       const banner = document.getElementById('welcomeBanner');
       if (!banner) return;
@@ -76,7 +55,19 @@
       }, 3000);
     };
 
-    // 7. Selesai
     console.log('[ARCANE] Init selesai');
+  }
+
+  // ===== Tunggu loading selesai =====
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('[ARCANE] Halaman dimuat');
+
+    if (window.ArcaneLoading) {
+      // Loading screen dulu → baru init
+      window.ArcaneLoading.start(initAll);
+    } else {
+      // Fallback — langsung init
+      initAll();
+    }
   });
 })();

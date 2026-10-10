@@ -27,11 +27,9 @@
     const terminalBody = document.getElementById('terminalBody');
     if (!terminalBody) { callback(); return; }
 
-    // Hapus baris lama yang udah selesai
     const oldLines = terminalBody.querySelectorAll('.terminal-line.done');
     oldLines.forEach(function(l) { l.remove(); });
 
-    // Bikin baris baru
     const line = document.createElement('div');
     line.className = 'terminal-line typing';
     line.innerHTML = '<span class="prompt">&gt;</span><span class="text"></span>';
@@ -54,9 +52,9 @@
     typeChar();
   }
 
-  function runLoading() {
+  // ===== runLoading — dengan callback =====
+  function runLoading(onDone) {
     if (currentLineIndex >= loadingLines.length) {
-      // Selesai
       setTimeout(function() {
         const ls = document.getElementById('loadingScreen');
         const web = document.getElementById('web');
@@ -64,30 +62,38 @@
         if (web) web.classList.add('visible');
         setTimeout(function() { if (ls) ls.remove(); }, 600);
         console.log('[Loading] Selesai');
+
+        // Panggil callback — init setelah loading selesai
+        if (typeof onDone === 'function') {
+          setTimeout(onDone, 100);
+        }
       }, 300);
       return;
     }
 
     typeLine(loadingLines[currentLineIndex], function() {
       currentLineIndex++;
-      runLoading();
+      runLoading(onDone);
     });
   }
 
-  function start() {
+  // ===== start — dengan callback =====
+  function start(onDone) {
     const ls = document.getElementById('loadingScreen');
     const web = document.getElementById('web');
 
+    // Kalau loading skip — langsung panggil callback
     if (sessionStorage.getItem('arcane-loading-shown') === 'yes') {
       console.log('[Loading] Skip — udah muncul di sesi ini');
       if (ls) ls.remove();
       if (web) web.classList.add('visible');
+      if (typeof onDone === 'function') onDone();
       return;
     }
 
     console.log('[Loading] Mulai');
     sessionStorage.setItem('arcane-loading-shown', 'yes');
-    runLoading();
+    runLoading(onDone);
   }
 
   // Expose
