@@ -11,9 +11,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const ALLOWED_ROLES = ['owner', 'operator'];
+
 let currentUser = null;
 
-// Init Lucide
 function refreshIcons() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
@@ -25,13 +26,19 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = 'login.html';
     return;
   }
+
   const userDoc = await getDoc(doc(db, 'users', user.uid));
-  const role = userDoc.exists() ? userDoc.data().role : 'member';
-  if (role !== 'owner' && role !== 'operator') {
+  const data = userDoc.exists() ? userDoc.data() : {};
+  const role = String(data.role || '').toLowerCase().trim();
+
+  console.log('[Admin] Role terdeteksi:', role);
+
+  if (!ALLOWED_ROLES.includes(role)) {
     alert('Akses ditolak. Halaman ini hanya untuk admin.');
     window.location.href = 'index.html';
     return;
   }
+
   currentUser = user;
 
   loadStats();
