@@ -352,6 +352,17 @@
         if (e.target === modal) closeModal();
       });
     }
+    
+    const modalSave = $('#modalSave');
+if (modalSave) {
+  modalSave.addEventListener('click', function() {
+    // Trigger form submit kalau ada
+    const form = document.querySelector('#modalBody form');
+    if (form) {
+      form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+  });
+}
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeModal();

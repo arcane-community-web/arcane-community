@@ -54,7 +54,9 @@
         setTimeout(function() { banner.remove(); }, 600);
       }, 3000);
     };
-
+    
+    window.dispatchEvent(new Event('arcane-ready'));
+    
     console.log('[ARCANE] Init selesai');
   }
 
