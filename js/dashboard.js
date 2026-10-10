@@ -4,13 +4,10 @@
 (function() {
   'use strict';
 
-  // ===== State =====
   let currentFilter = 'all';
-  const MAX_LOGS = 50;
 
-  // ===== Elemen =====
-  const $ = function(sel) { return document.querySelector(sel); };
-  const $$ = function(sel) { return document.querySelectorAll(sel); };
+  function $(sel) { return document.querySelector(sel); }
+  function $$(sel) { return document.querySelectorAll(sel); }
 
   // ===== Sidebar =====
   function openSidebar() {
@@ -45,6 +42,7 @@
   // ===== Ganti halaman =====
   function showPage(pageName) {
     console.log('[Dashboard] Ganti halaman: ' + pageName);
+
     $$('.page').forEach(function(p) { p.classList.remove('active'); });
     const target = $('[data-page-content="' + pageName + '"]');
     if (target) target.classList.add('active');
@@ -74,15 +72,16 @@
     const modal = $('#modal');
     const modalTitle = $('#modalTitle');
     const modalBody = $('#modalBody');
+    const modalFooter = $('#modalFooter');
     if (!modal) return;
 
     if (modalTitle) modalTitle.textContent = title;
     if (modalBody) modalBody.innerHTML = contentHtml;
+    if (modalFooter) modalFooter.style.display = 'flex';
 
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Bind tombol simpan
     const saveBtn = $('#modalSave');
     if (saveBtn && typeof onSave === 'function') {
       saveBtn.onclick = function(e) {
@@ -93,7 +92,6 @@
   }
 
   function closeModal() {
-    console.log('[Modal] Tutup');
     const modal = $('#modal');
     if (modal) modal.classList.remove('open');
     document.body.style.overflow = '';
@@ -101,29 +99,41 @@
 
   // ===== Konfirmasi =====
   function confirmDialog(message, onConfirm) {
-    openModal('Konfirmasi', 
-      '<p style="margin-bottom:20px;color:var(--text-mute);">' + message + '</p>' +
-      '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
-      '  <button type="button" class="modal-btn ghost" id="modalCancel">Batal</button>' +
-      '  <button type="button" class="modal-btn danger" id="modalConfirm">Hapus</button>' +
-      '</div>',
-      null
-    );
+    const modal = $('#modal');
+    const modalTitle = $('#modalTitle');
+    const modalBody = $('#modalBody');
+    const modalFooter = $('#modalFooter');
+    if (!modal) return;
 
-    const confirmBtn = $('#modalConfirm');
-    const cancelBtn = $('#modalCancel');
-    if (confirmBtn) {
-      confirmBtn.onclick = function() {
-        closeModal();
-        if (typeof onConfirm === 'function') onConfirm();
-      };
-    }
-    if (cancelBtn) {
-      cancelBtn.onclick = closeModal;
+    if (modalTitle) modalTitle.textContent = 'Konfirmasi';
+    if (modalBody) modalBody.innerHTML = '<p style="color:var(--text-mute);">' + message + '</p>';
+    if (modalFooter) modalFooter.style.display = 'none';
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Ganti footer sementara
+    if (modalFooter) {
+      modalFooter.innerHTML = 
+        '<button type="button" class="modal-btn ghost" id="cdCancel">Batal</button>' +
+        '<button type="button" class="modal-btn danger" id="cdConfirm">Hapus</button>';
+      modalFooter.style.display = 'flex';
+
+      const confirmBtn = $('#cdConfirm');
+      const cancelBtn = $('#cdCancel');
+      if (confirmBtn) {
+        confirmBtn.onclick = function() {
+          closeModal();
+          if (typeof onConfirm === 'function') onConfirm();
+        };
+      }
+      if (cancelBtn) {
+        cancelBtn.onclick = closeModal;
+      }
     }
   }
 
-  // ===== Console Log — Render =====
+  // ===== Console Log =====
   function renderLogs() {
     const list = $('#logList');
     if (!list) return;
@@ -138,13 +148,12 @@
       return;
     }
 
-    // Urut dari terbaru
     filtered = filtered.slice().reverse();
 
     list.innerHTML = filtered.map(function(log) {
       const icon = log.type === 'error' ? '❌' : log.type === 'warning' ? '⚠️' : '✅';
-      const hint = log.type !== 'success' 
-        ? '<span class="log-hint">Klik untuk detail teknis →</span>' 
+      const hint = log.type !== 'success'
+        ? '<span class="log-hint">Klik untuk detail teknis →</span>'
         : '';
       return '<div class="log-item ' + log.type + '" data-id="' + log.id + '">' +
         '<span class="log-time">' + log.time + '</span>' +
@@ -154,7 +163,6 @@
       '</div>';
     }).join('');
 
-    // Bind klik
     list.querySelectorAll('.log-item').forEach(function(item) {
       item.addEventListener('click', function() {
         const id = parseFloat(item.dataset.id);
@@ -164,16 +172,15 @@
     });
   }
 
-  // ===== Console Log — Detail =====
   function showLogDetail(log) {
     const list = $('#logList');
     if (!list) return;
 
     const t = log.technical || {};
-    const errType = (t.message && t.message.split(':')[0]) || 
+    const errType = (t.message && t.message.split(':')[0]) ||
                     (log.type === 'error' ? 'Error' : 'Info');
 
-    list.innerHTML = 
+    list.innerHTML =
       '<div class="log-detail">' +
         '<span class="error-type">' + escapeHtml(errType) + '</span>\n' +
         escapeHtml(t.message || 'N/A') + '\n\n' +
@@ -203,17 +210,12 @@
           'Line: ' + (t.line || 'N/A') + '\n' +
           'Function: ' + (t.function || 'N/A') + '\n\n' +
           'Stack:\n' + (t.stack || 'N/A');
-
         copyToClipboard(text);
       };
     }
-
-    if (backBtn) {
-      backBtn.onclick = renderLogs;
-    }
+    if (backBtn) backBtn.onclick = renderLogs;
   }
 
-  // ===== Update badge error =====
   function updateLogBadge() {
     const badge = $('#logBadge');
     if (!badge) return;
@@ -226,14 +228,12 @@
     }
   }
 
-  // ===== Helper: Copy ke clipboard =====
+  // ===== Helper =====
   function copyToClipboard(text) {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(function() {
         alert('✅ Error dicopy! Kirim ke developer.');
-      }).catch(function() {
-        fallbackCopy(text);
-      });
+      }).catch(function() { fallbackCopy(text); });
     } else {
       fallbackCopy(text);
     }
@@ -255,7 +255,6 @@
     document.body.removeChild(ta);
   }
 
-  // ===== Helper: Escape HTML =====
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -266,7 +265,7 @@
       .replace(/'/g, '&#39;');
   }
 
-  // ===== Expose API =====
+  // ===== Expose =====
   window.ArcaneDashboard = {
     openSidebar: openSidebar,
     closeSidebar: closeSidebar,
@@ -281,7 +280,7 @@
   window.renderLogs = renderLogs;
   window.updateLogBadge = updateLogBadge;
 
-  // ===== Bind Event — setelah DOM siap =====
+  // ===== Bind Event =====
   document.addEventListener('DOMContentLoaded', function() {
     console.log('[Dashboard] Init');
 
@@ -300,13 +299,24 @@
       item.addEventListener('click', function() {
         $$('.sidebar-nav-item').forEach(function(i) { i.classList.remove('active'); });
         item.classList.add('active');
-        const pageName = item.dataset.page;
-        showPage(pageName);
-
-        // Mobile: tutup sidebar
+        showPage(item.dataset.page);
         if (window.innerWidth <= 768) {
           setTimeout(closeSidebar, 200);
         }
+      });
+    });
+
+    // Tombol data-goto (dari hero)
+    $$('[data-goto]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const target = btn.dataset.goto;
+        console.log('[Dashboard] data-goto: ' + target);
+        // Buka sidebar & aktifkan menu
+        $$('.sidebar-nav-item').forEach(function(i) {
+          i.classList.remove('active');
+          if (i.dataset.page === target) i.classList.add('active');
+        });
+        showPage(target);
       });
     });
 
@@ -333,6 +343,9 @@
     const modalClose = $('#modalClose');
     if (modalClose) modalClose.addEventListener('click', closeModal);
 
+    const modalCancel = $('#modalCancel');
+    if (modalCancel) modalCancel.addEventListener('click', closeModal);
+
     const modal = $('#modal');
     if (modal) {
       modal.addEventListener('click', function(e) {
@@ -340,7 +353,6 @@
       });
     }
 
-    // ESC tutup modal
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeModal();
     });
@@ -367,7 +379,35 @@
       });
     }
 
-    // Render awal
+    // Lightbox close
+    const lbClose = $('#lightboxClose');
+    if (lbClose) {
+      lbClose.addEventListener('click', function() {
+        const box = $('#lightbox');
+        if (box) box.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+    const lb = $('#lightbox');
+    if (lb) {
+      lb.addEventListener('click', function(e) {
+        if (e.target === lb) {
+          lb.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const box = $('#lightbox');
+        if (box && box.classList.contains('open')) {
+          box.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      }
+    });
+
+    // Render log awal
     renderLogs();
     updateLogBadge();
   });
