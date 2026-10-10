@@ -886,15 +886,15 @@ html[data-theme="dark"] .login-logo { filter: brightness(0) invert(1); }
   .event-priority { font-size: 12px; }
 }
 
-/* ===== PAGE TRANSITION — Geser dari Kanan ===== */
+/* ===== PAGE TRANSITION ===== */
 body {
-  animation: pageSlideIn .45s ease-out;
+  animation: pageEnter .5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes pageSlideIn {
+@keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(40px);
   }
   to {
     opacity: 1;
@@ -902,18 +902,71 @@ body {
   }
 }
 
-/* Efek di container utama */
+/* Fade out pas klik link */
+body.page-exit {
+  animation: pageExit .35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+}
+
+/* Elemen utama fade in smooth */
 .navbar,
 .hero,
 .section,
-.footer {
-  animation: contentFadeIn .5s ease-out;
+.footer,
+.admin-sidebar,
+.admin-main {
+  animation: fadeSlideIn .6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
 }
 
-@keyframes contentFadeIn {
+@keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger delay biar muncul berurutan */
+.navbar           { animation-delay: 0s; }
+.hero             { animation-delay: .05s; }
+.section          { animation-delay: .1s; }
+.footer           { animation-delay: .15s; }
+
+/* Dashboard — sidebar dari kiri, main dari kanan */
+.admin-sidebar {
+  animation: slideFromLeft .5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.admin-main {
+  animation: slideFromRight .5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
   }
   to {
     opacity: 1;
