@@ -1,10 +1,9 @@
 // ===== INIT — ARCANE =====
-// Init semua — dipanggil terakhir
+// Init semua — dipanggil setelah loading selesai
 
 (function() {
   'use strict';
 
-  // ===== Fungsi init semua =====
   function initAll() {
     console.log('[ARCANE] Mulai init setelah loading');
 
@@ -23,7 +22,7 @@
     // 3. Lucide icons
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
-    // 4. Expose showWelcomeBanner
+    // 4. Welcome banner function
     window.showWelcomeBanner = function(username, roleDisplay, role) {
       const banner = document.getElementById('welcomeBanner');
       if (!banner) return;
@@ -54,9 +53,11 @@
         setTimeout(function() { banner.remove(); }, 600);
       }, 3000);
     };
-    
+
+    // 5. Trigger event — arcane-ready
     window.dispatchEvent(new Event('arcane-ready'));
-    
+    console.log('[ARCANE] Event arcane-ready dipicu');
+
     console.log('[ARCANE] Init selesai');
   }
 
@@ -65,10 +66,8 @@
     console.log('[ARCANE] Halaman dimuat');
 
     if (window.ArcaneLoading) {
-      // Loading screen dulu → baru init
       window.ArcaneLoading.start(initAll);
     } else {
-      // Fallback — langsung init
       initAll();
     }
   });

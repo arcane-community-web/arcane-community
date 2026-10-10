@@ -6,7 +6,7 @@
 
   function $(sel) { return document.querySelector(sel); }
 
-  // ===== Lazy Load Gambar — Intersection Observer =====
+  // ===== Lazy Load Gambar =====
   function lazyLoadImages() {
     const images = document.querySelectorAll('img[data-src]');
     if (!images.length) return;
@@ -38,6 +38,7 @@
   // ===== Scroll Reveal =====
   function initScrollReveal() {
     const elements = document.querySelectorAll('.section, .section-head, .news-card, .event-card, .gallery-item');
+    if (!elements.length) return;
 
     if (!('IntersectionObserver' in window)) {
       elements.forEach(function(el) { el.classList.add('reveal-visible'); });
@@ -97,7 +98,6 @@
   function renderNews() {
     const grid = $('#newsGrid');
     if (!grid) return;
-
     const data = window.ArcaneData;
     if (!data) return;
 
@@ -120,7 +120,6 @@
   function renderEvents() {
     const list = $('#eventsList');
     if (!list) return;
-
     const data = window.ArcaneData;
     if (!data) return;
 
@@ -157,12 +156,13 @@
       const title = data.getTitle(item);
       const desc = data.getDescription(item);
       const prioLabel = window.ArcaneLang ? window.ArcaneLang.t('events.priority') : 'Prioritas';
+      const tbaLabel = window.ArcaneLang ? window.ArcaneLang.t('events.location.tba') : 'Belum ditentukan';
 
       const locationHtml = item.location
         ? (item.maps_url
             ? '<a href="' + item.maps_url + '" target="_blank" rel="noopener">' + item.location + '</a>'
             : '<span>' + item.location + '</span>')
-        : '<span style="font-style: italic; opacity: .7;">Belum ditentukan</span>';
+        : '<span style="font-style: italic; opacity: .7;">' + tbaLabel + '</span>';
 
       return '<div class="event-card reveal" style="--index: ' + index + ';">' +
         '<div class="event-header" style="background: ' + cat.color + ';">' +
@@ -185,11 +185,10 @@
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
-  // ===== Render Galeri — Lazy Load + Reveal =====
+  // ===== Render Galeri — Lazy Load =====
   function renderGallery() {
     const grid = $('#galleryGrid');
     if (!grid) return;
-
     const data = window.ArcaneData;
     if (!data) return;
 
@@ -201,10 +200,8 @@
       '</div>';
     }).join('');
 
-    // Lazy load
     lazyLoadImages();
 
-    // Bind lightbox
     grid.querySelectorAll('.gallery-item').forEach(function(el) {
       el.addEventListener('click', function() {
         const box = document.getElementById('lightbox');
@@ -224,7 +221,7 @@
     renderNews();
     renderEvents();
     renderGallery();
-    initScrollReveal();   // ← Scroll reveal
+    initScrollReveal();
     console.log('[Render Public] Selesai');
   }
 

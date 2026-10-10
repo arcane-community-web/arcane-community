@@ -1,12 +1,10 @@
 // ===== LOGGER — Sistem Log ARCANE =====
 // Tangkap console.log, warn, error + error global
-// Dual-layer: ramah awam + detail teknis
 // Max 50 log di sessionStorage
 
 (function() {
   'use strict';
 
-  // ===== State =====
   let logs = [];
   const MAX_LOGS = 50;
   const STORAGE_KEY = 'arcane-logs';
@@ -19,13 +17,11 @@
     logs = [];
   }
 
-  // ===== Simpan ke sessionStorage =====
+  // ===== Simpan =====
   function saveLogs() {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(logs.slice(-MAX_LOGS)));
-    } catch (e) {
-      // Storage penuh / error — skip
-    }
+    } catch (e) {}
   }
 
   // ===== Format waktu =====
@@ -33,94 +29,63 @@
     return new Date().toLocaleTimeString('id-ID', { hour12: false });
   }
 
+  // ===== Serialize args =====
+  function serialize(args) {
+    return args.map(function(a) {
+      try {
+        return typeof a === 'object' ? JSON.stringify(a) : String(a);
+      } catch (e) {
+        return String(a);
+      }
+    }).join(' ');
+  }
+
   // ===== Tambah log =====
   function addLog(type, friendly, technical) {
-    const log = {
+    logs.push({
       id: Date.now() + Math.random(),
-      type: type,                    // 'success' | 'warning' | 'error'
+      type: type,
       time: now(),
       friendly: friendly,
       technical: technical || { message: friendly }
-    };
+    });
 
-    logs.push(log);
     if (logs.length > MAX_LOGS) {
       logs = logs.slice(-MAX_LOGS);
     }
     saveLogs();
 
-    // Trigger render kalau fungsi ada
-    if (typeof window.renderLogs === 'function') {
-      window.renderLogs();
-    }
-    if (typeof window.updateLogBadge === 'function') {
-      window.updateLogBadge();
-    }
+    if (typeof window.renderLogs === 'function') window.renderLogs();
+    if (typeof window.updateLogBadge === 'function') window.updateLogBadge();
   }
 
   // ===== Simpan referensi asli =====
-  const originalLog = console.log;
-  const originalWarn = console.warn;
-  const originalError = console.error;
+  const _log = console.log;
+  const _warn = console.warn;
+  const _error = console.error;
 
-  // ===== Tangkap console.log =====
-  console.log = function(...args) {
-    const msg = args.map(a => {
-      try {
-        return typeof a === 'object' ? JSON.stringify(a) : String(a);
-      } catch (e) {
-        return String(a);
-      }
-    }).join(' ');
-
-    addLog('success', msg, {
-      message: msg,
-      stack: new Error().stack
-    });
-
-    originalLog.apply(console, args);
+  // ===== Override console =====
+  console.log = function() {
+    const msg = serialize(arguments);
+    addLog('success', msg, { message: msg, stack: new Error().stack });
+    _log.apply(console, arguments);
   };
 
-  // ===== Tangkap console.warn =====
-  console.warn = function(...args) {
-    const msg = args.map(a => {
-      try {
-        return typeof a === 'object' ? JSON.stringify(a) : String(a);
-      } catch (e) {
-        return String(a);
-      }
-    }).join(' ');
-
-    addLog('warning', msg, {
-      message: msg,
-      stack: new Error().stack
-    });
-
-    originalWarn.apply(console, args);
+  console.warn = function() {
+    const msg = serialize(arguments);
+    addLog('warning', msg, { message: msg, stack: new Error().stack });
+    _warn.apply(console, arguments);
   };
 
-  // ===== Tangkap console.error =====
-  console.error = function(...args) {
-    const msg = args.map(a => {
-      try {
-        return typeof a === 'object' ? JSON.stringify(a) : String(a);
-      } catch (e) {
-        return String(a);
-      }
-    }).join(' ');
-
-    addLog('error', 'Ada masalah — klik untuk detail', {
-      message: msg,
-      stack: new Error().stack
-    });
-
-    originalError.apply(console, args);
+  console.error = function() {
+    const msg = serialize(arguments);
+    addLog('error', 'Ada masalah — klik untuk detail', { message: msg, stack: new Error().stack });
+    _error.apply(console, arguments);
   };
 
-  // ===== Tangkap error global =====
+  // ===== Global error =====
   window.addEventListener('error', function(e) {
-    const fileName = e.filename ? e.filename.split('/').pop() : 'halaman ini';
-    addLog('error', 'Ada masalah di ' + fileName, {
+    addLog('error', 'Ada masalah di ' + (e.filename ? e.filename.split('/').pop() : 'halaman ini'), {
       message: e.message,
       file: e.filename,
       line: e.lineno,
@@ -129,7 +94,6 @@
     });
   });
 
-  // ===== Tangkap promise rejection =====
   window.addEventListener('unhandledrejection', function(e) {
     const reason = e.reason || {};
     addLog('error', 'Ada masalah di sistem', {
@@ -138,7 +102,7 @@
     });
   });
 
-  // ===== Expose API =====
+  // ===== API =====
   window.ArcaneLogger = {
     add: addLog,
     getAll: function() { return logs.slice(); },
@@ -149,14 +113,12 @@
       if (typeof window.updateLogBadge === 'function') window.updateLogBadge();
     },
     filter: function(type) {
-      if (type === 'all') return logs.slice();
-      return logs.filter(function(l) { return l.type === type; });
+      return type === 'all' ? logs.slice() : logs.filter(function(l) { return l.type === type; });
     },
     countError: function() {
       return logs.filter(function(l) { return l.type === 'error'; }).length;
     }
   };
 
-  // ===== Log awal =====
-  originalLog.call(console, '[Logger] Sistem log siap');
+  _log.call(console, '[Logger] Siap');
 })();

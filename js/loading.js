@@ -52,7 +52,6 @@
     typeChar();
   }
 
-  // ===== runLoading — dengan callback =====
   function runLoading(onDone) {
     if (currentLineIndex >= loadingLines.length) {
       setTimeout(function() {
@@ -63,7 +62,6 @@
         setTimeout(function() { if (ls) ls.remove(); }, 600);
         console.log('[Loading] Selesai');
 
-        // Panggil callback — init setelah loading selesai
         if (typeof onDone === 'function') {
           setTimeout(onDone, 100);
         }
@@ -77,12 +75,10 @@
     });
   }
 
-  // ===== start — dengan callback =====
   function start(onDone) {
     const ls = document.getElementById('loadingScreen');
     const web = document.getElementById('web');
 
-    // Kalau loading skip — langsung panggil callback
     if (sessionStorage.getItem('arcane-loading-shown') === 'yes') {
       console.log('[Loading] Skip — udah muncul di sesi ini');
       if (ls) ls.remove();
@@ -96,6 +92,5 @@
     runLoading(onDone);
   }
 
-  // Expose
   window.ArcaneLoading = { start: start };
 })();

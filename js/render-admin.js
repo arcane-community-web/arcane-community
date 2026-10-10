@@ -1,10 +1,39 @@
 // ===== RENDER ADMIN — Dashboard =====
-// Render list admin (berita, acara, galeri) + statistik
+// Render list admin + statistik + lazy image
 
 (function() {
   'use strict';
 
   function $(sel) { return document.querySelector(sel); }
+
+  // ===== Lazy Load Gambar =====
+  function lazyLoadImages() {
+    const images = document.querySelectorAll('img[data-src]');
+    if (!images.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      images.forEach(function(img) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.classList.add('loaded');
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+          img.classList.add('loaded');
+          observer.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+    images.forEach(function(img) { observer.observe(img); });
+  }
 
   // ===== Statistik =====
   function renderStats() {
@@ -24,12 +53,12 @@
   function renderAdminNews() {
     const list = $('#adminNewsList');
     if (!list) return;
-
     const data = window.ArcaneData;
     if (!data) return;
 
     if (!data.news.length) {
-      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">' + (window.ArcaneLang ? window.ArcaneLang.t('admin.news.empty') : 'Belum ada berita.') + '</p>';
+      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">' + 
+        (window.ArcaneLang ? window.ArcaneLang.t('admin.news.empty') : 'Belum ada berita.') + '</p>';
       return;
     }
 
@@ -46,7 +75,6 @@
       '</div>';
     }).join('');
 
-    // Bind edit/delete
     list.querySelectorAll('.edit-news').forEach(function(btn) {
       btn.addEventListener('click', function() {
         if (typeof window.editNews === 'function') window.editNews(Number(btn.dataset.id));
@@ -65,12 +93,12 @@
   function renderAdminEvents() {
     const list = $('#adminEventsList');
     if (!list) return;
-
     const data = window.ArcaneData;
     if (!data) return;
 
     if (!data.events.length) {
-      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">' + (window.ArcaneLang ? window.ArcaneLang.t('admin.events.empty') : 'Belum ada acara.') + '</p>';
+      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">' + 
+        (window.ArcaneLang ? window.ArcaneLang.t('admin.events.empty') : 'Belum ada acara.') + '</p>';
       return;
     }
 
@@ -103,25 +131,27 @@
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
-  // ===== Admin Gallery =====
+  // ===== Admin Gallery — Lazy =====
   function renderAdminGallery() {
     const list = $('#adminGalleryList');
     if (!list) return;
-
     const data = window.ArcaneData;
     if (!data) return;
 
     if (!data.gallery.length) {
-      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;grid-column:1/-1;">' + (window.ArcaneLang ? window.ArcaneLang.t('admin.gallery.empty') : 'Belum ada gambar.') + '</p>';
+      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;grid-column:1/-1;">' + 
+        (window.ArcaneLang ? window.ArcaneLang.t('admin.gallery.empty') : 'Belum ada gambar.') + '</p>';
       return;
     }
 
     list.innerHTML = data.gallery.map(function(item) {
       return '<div class="admin-gallery-item">' +
-        '<img src="' + item.src + '" alt="' + item.caption_id + '" loading="lazy" />' +
+        '<img data-src="' + item.src + '" alt="' + item.caption_id + '" class="lazy-img" />' +
         '<button class="delete-gallery" data-id="' + item.id + '"><i data-lucide="trash-2"></i></button>' +
       '</div>';
     }).join('');
+
+    lazyLoadImages();
 
     list.querySelectorAll('.delete-gallery').forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -148,6 +178,7 @@
     renderStats: renderStats,
     renderNews: renderAdminNews,
     renderEvents: renderAdminEvents,
-    renderGallery: renderAdminGallery
+    renderGallery: renderAdminGallery,
+    lazyLoadImages: lazyLoadImages
   };
 })();

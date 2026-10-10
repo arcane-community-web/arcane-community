@@ -39,7 +39,7 @@
     }
   }
 
-  // ===== Ganti halaman =====
+  // ===== Ganti Halaman =====
   function showPage(pageName) {
     console.log('[Dashboard] Ganti halaman: ' + pageName);
 
@@ -47,7 +47,6 @@
     const target = $('[data-page-content="' + pageName + '"]');
     if (target) target.classList.add('active');
 
-    // Re-trigger animasi
     const content = $('#contentArea');
     if (content) {
       content.style.animation = 'none';
@@ -55,10 +54,8 @@
       content.style.animation = '';
     }
 
-    // Scroll ke atas
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Kalau console, render log
     if (pageName === 'console') {
       setTimeout(function() {
         if (typeof window.renderLogs === 'function') window.renderLogs();
@@ -92,6 +89,7 @@
   }
 
   function closeModal() {
+    console.log('[Modal] Tutup');
     const modal = $('#modal');
     if (modal) modal.classList.remove('open');
     document.body.style.overflow = '';
@@ -107,30 +105,26 @@
 
     if (modalTitle) modalTitle.textContent = 'Konfirmasi';
     if (modalBody) modalBody.innerHTML = '<p style="color:var(--text-mute);">' + message + '</p>';
-    if (modalFooter) modalFooter.style.display = 'none';
 
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-
-    // Ganti footer sementara
     if (modalFooter) {
       modalFooter.innerHTML = 
         '<button type="button" class="modal-btn ghost" id="cdCancel">Batal</button>' +
         '<button type="button" class="modal-btn danger" id="cdConfirm">Hapus</button>';
       modalFooter.style.display = 'flex';
-
-      const confirmBtn = $('#cdConfirm');
-      const cancelBtn = $('#cdCancel');
-      if (confirmBtn) {
-        confirmBtn.onclick = function() {
-          closeModal();
-          if (typeof onConfirm === 'function') onConfirm();
-        };
-      }
-      if (cancelBtn) {
-        cancelBtn.onclick = closeModal;
-      }
     }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    const confirmBtn = $('#cdConfirm');
+    const cancelBtn = $('#cdCancel');
+    if (confirmBtn) {
+      confirmBtn.onclick = function() {
+        closeModal();
+        if (typeof onConfirm === 'function') onConfirm();
+      };
+    }
+    if (cancelBtn) cancelBtn.onclick = closeModal;
   }
 
   // ===== Console Log =====
@@ -144,7 +138,8 @@
     }
 
     if (!filtered.length) {
-      list.innerHTML = '<p class="log-empty">Belum ada log.</p>';
+      list.innerHTML = '<p class="log-empty">' + 
+        (window.ArcaneLang ? window.ArcaneLang.t('console.empty') : 'Belum ada log.') + '</p>';
       return;
     }
 
@@ -153,7 +148,9 @@
     list.innerHTML = filtered.map(function(log) {
       const icon = log.type === 'error' ? '❌' : log.type === 'warning' ? '⚠️' : '✅';
       const hint = log.type !== 'success'
-        ? '<span class="log-hint">Klik untuk detail teknis →</span>'
+        ? '<span class="log-hint">' + 
+          (window.ArcaneLang ? window.ArcaneLang.t('console.detail') : 'Klik untuk detail teknis →') + 
+          '</span>'
         : '';
       return '<div class="log-item ' + log.type + '" data-id="' + log.id + '">' +
         '<span class="log-time">' + log.time + '</span>' +
@@ -177,8 +174,10 @@
     if (!list) return;
 
     const t = log.technical || {};
-    const errType = (t.message && t.message.split(':')[0]) ||
+    const errType = (t.message && t.message.split(':')[0]) || 
                     (log.type === 'error' ? 'Error' : 'Info');
+    const copyLabel = window.ArcaneLang ? window.ArcaneLang.t('console.copy') : '📋 Copy Error';
+    const backLabel = window.ArcaneLang ? window.ArcaneLang.t('console.back') : '← Kembali';
 
     list.innerHTML =
       '<div class="log-detail">' +
@@ -193,8 +192,8 @@
         '<span class="value">' + escapeHtml(t.stack || 'N/A') + '</span>' +
       '</div>' +
       '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">' +
-        '<button class="modal-btn primary" id="copyErrBtn">📋 Copy Error</button>' +
-        '<button class="modal-btn ghost" id="backLogsBtn">← Kembali</button>' +
+        '<button class="modal-btn primary" id="copyErrBtn">' + copyLabel + '</button>' +
+        '<button class="modal-btn ghost" id="backLogsBtn">' + backLabel + '</button>' +
       '</div>';
 
     const copyBtn = $('#copyErrBtn');
@@ -284,7 +283,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     console.log('[Dashboard] Init');
 
-    // Toggle sidebar
     const toggleBtn = $('#toggleSidebar');
     if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
 
@@ -306,12 +304,10 @@
       });
     });
 
-    // Tombol data-goto (dari hero)
+    // Data-goto
     $$('[data-goto]').forEach(function(btn) {
       btn.addEventListener('click', function() {
         const target = btn.dataset.goto;
-        console.log('[Dashboard] data-goto: ' + target);
-        // Buka sidebar & aktifkan menu
         $$('.sidebar-nav-item').forEach(function(i) {
           i.classList.remove('active');
           if (i.dataset.page === target) i.classList.add('active');
@@ -330,7 +326,7 @@
       });
     }
 
-    // Brand / logo
+    // Brand
     const brand = $('#brandHome');
     if (brand) {
       brand.addEventListener('click', function() {
@@ -339,12 +335,22 @@
       });
     }
 
-    // Modal close
+    // Modal
     const modalClose = $('#modalClose');
     if (modalClose) modalClose.addEventListener('click', closeModal);
 
     const modalCancel = $('#modalCancel');
     if (modalCancel) modalCancel.addEventListener('click', closeModal);
+
+    const modalSave = $('#modalSave');
+    if (modalSave) {
+      modalSave.addEventListener('click', function() {
+        const form = document.querySelector('#modalBody form');
+        if (form) {
+          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+      });
+    }
 
     const modal = $('#modal');
     if (modal) {
@@ -352,17 +358,6 @@
         if (e.target === modal) closeModal();
       });
     }
-    
-    const modalSave = $('#modalSave');
-if (modalSave) {
-  modalSave.addEventListener('click', function() {
-    // Trigger form submit kalau ada
-    const form = document.querySelector('#modalBody form');
-    if (form) {
-      form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-    }
-  });
-}
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeModal();
@@ -390,7 +385,7 @@ if (modalSave) {
       });
     }
 
-    // Lightbox close
+    // Lightbox
     const lbClose = $('#lightboxClose');
     if (lbClose) {
       lbClose.addEventListener('click', function() {
@@ -418,7 +413,6 @@ if (modalSave) {
       }
     });
 
-    // Render log awal
     renderLogs();
     updateLogBadge();
   });
