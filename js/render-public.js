@@ -83,8 +83,8 @@
     if (!upcoming.length) {
       list.innerHTML = '<div class="events-empty">' +
         '<i data-lucide="calendar-x"></i>' +
-        '<h3>Belum Ada Acara</h3>' +
-        '<p>Acara akan muncul di sini kalau sudah ditambahkan.</p>' +
+        '<h3>' + (window.ArcaneLang ? window.ArcaneLang.t('events.empty.title') : 'Belum Ada Acara') + '</h3>' +
+'<p>' + (window.ArcaneLang ? window.ArcaneLang.t('events.empty.desc') : 'Acara akan muncul di sini.') + '</p>' +
       '</div>';
       if (typeof lucide !== 'undefined') lucide.createIcons();
       return;
@@ -116,7 +116,7 @@
             '<div class="event-meta-row"><i data-lucide="tag"></i><span class="event-category-badge" style="background: ' + cat.color + ';">' + cat.label + '</span></div>' +
             '<div class="event-location-row">' +
               '<div class="event-location"><i data-lucide="map-pin"></i>' + locationHtml + '</div>' +
-              '<span class="event-priority" style="color: ' + prioColor + ';"><i data-lucide="alert-circle"></i> Prioritas: ' + prio + '</span>' +
+              '<span class="event-priority" style="color: ' + prioColor + ';">'<i data-lucide="alert-circle"></i> ' + (window.ArcaneLang ? window.ArcaneLang.t('events.priority') : 'Prioritas') + ': ' + prio + '</span>' +
             '</div>' +
           '</div>' +
           (desc ? '<p class="event-desc">' + desc + '</p>' : '') +

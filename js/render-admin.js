@@ -29,7 +29,7 @@
     if (!data) return;
 
     if (!data.news.length) {
-      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">Belum ada berita.</p>';
+      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">' + (window.ArcaneLang ? window.ArcaneLang.t('admin.news.empty') : 'Belum ada berita.') + '</p>';
       return;
     }
 
@@ -70,7 +70,7 @@
     if (!data) return;
 
     if (!data.events.length) {
-      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">Belum ada acara.</p>';
+      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;">' + (window.ArcaneLang ? window.ArcaneLang.t('admin.events.empty') : 'Belum ada acara.') + '</p>';
       return;
     }
 
@@ -112,7 +112,7 @@
     if (!data) return;
 
     if (!data.gallery.length) {
-      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;grid-column:1/-1;">Belum ada gambar.</p>';
+      list.innerHTML = '<p style="color:var(--text-mute);text-align:center;padding:30px 0;grid-column:1/-1;">' + (window.ArcaneLang ? window.ArcaneLang.t('admin.gallery.empty') : 'Belum ada gambar.') + '</p>';
       return;
     }
 
