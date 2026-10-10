@@ -885,3 +885,38 @@ html[data-theme="dark"] .login-logo { filter: brightness(0) invert(1); }
   .event-location { font-size: 12.5px; }
   .event-priority { font-size: 12px; }
 }
+
+/* ===== PAGE TRANSITION — Geser dari Kanan ===== */
+body {
+  animation: pageSlideIn .45s ease-out;
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Efek di container utama */
+.navbar,
+.hero,
+.section,
+.footer {
+  animation: contentFadeIn .5s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
