@@ -158,7 +158,7 @@
     </div>
   </section>
 
-  <!-- ===== EVENTS ===== -->
+  <!-- ===== EVENTS — CARD VIEW ===== -->
   <section class="section section-alt" id="events">
     <div class="container">
       <div class="section-head reveal">
@@ -253,11 +253,19 @@
       }
     });
 
+    // Banner muncul SEKALI per sesi
     function showWelcomeBanner(username, roleDisplay, role) {
       const banner = document.getElementById('welcomeBanner');
+      if (!banner) return;
+
+      // Cek: udah pernah muncul di sesi ini?
+      if (sessionStorage.getItem('arcane-welcome-shown') === 'yes') {
+        banner.remove();
+        return;
+      }
+
       const usernameEl = document.getElementById('welcomeUsername');
       const roleEl = document.getElementById('welcomeRole');
-      if (!banner) return;
 
       usernameEl.textContent = username;
       if (role === 'owner') {
@@ -267,6 +275,8 @@
         roleEl.style.display = 'inline-block';
       }
 
+      sessionStorage.setItem('arcane-welcome-shown', 'yes');
+
       setTimeout(() => banner.classList.add('visible'), 100);
       setTimeout(() => {
         banner.classList.remove('visible');
@@ -275,6 +285,7 @@
     }
 
     document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+      sessionStorage.removeItem('arcane-welcome-shown');
       await signOut(auth);
       window.location.href = 'login.html';
     });
