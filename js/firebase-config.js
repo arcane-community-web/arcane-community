@@ -1,12 +1,17 @@
-// ===== FIREBASE CONFIG =====
-// Ganti dengan config dari Firebase Console
-// Firebase Console → Project Settings → Your apps → Web
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-export const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_AUTH_DOMAIN",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDWl0VFu_a7z4kBiR50vsEAoV3oPisfZHA",
+  authDomain: "arcane-community.firebaseapp.com",
+  projectId: "arcane-community",
+  storageBucket: "arcane-community.firebasestorage.app",
+  messagingSenderId: "573817025196",
+  appId: "1:573817025196:web:4b780a134d2f424b132509"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
