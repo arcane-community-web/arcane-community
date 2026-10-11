@@ -39,8 +39,7 @@ export function show(message, type, duration) {
     'opacity:0;transform:translateX(30px);transition:opacity .3s ease,transform .3s ease;';
 
   toast.innerHTML =
-    '<span style="font-weight:700;font-size:16px;flex-shrink:0;">' + color.icon + '</span>' +
-    '<span style="flex:1;">' + escapeHtml(message) + '</span>';
+    '<span style="font-weight:700;font-size:16px;flex-shrink:0;">' + color.icon + '</span>';
 
   container.appendChild(toast);
 

@@ -3,6 +3,7 @@
 let sidebarEl = null;
 let backdropEl = null;
 let toggleBtn = null;
+let initialized = false;
 
 // ===== Init =====
 export function initSidebar() {

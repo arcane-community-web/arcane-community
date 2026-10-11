@@ -3,6 +3,7 @@
 
 let revealObserver = null;
 let lazyObserver = null;
+let initialized = false;
 
 // ===== Init =====
 export function initReveal() {
