@@ -578,3 +578,9 @@ img.lazy-img.loaded {
     max-width: none;
   }
 }
+
+/* DEBUG: Matiin reveal */
+.reveal {
+  opacity: 1 !important;
+  transform: none !important;
+}
