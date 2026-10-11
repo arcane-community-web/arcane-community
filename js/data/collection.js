@@ -48,11 +48,11 @@ export async function list(collectionName, options) {
       const snap = await getDocs(ref);
       const items = [];
       snap.forEach(function(d) {
-        const data = d.data();
-        if (includeArchived || data.archived !== true) {
-          items.push({ id: d.id, ...data });
-        }
-      });
+  const data = d.data();
+  if (includeArchived || data.archived !== true) {
+    items.push({ id: d.id, ...data });
+  }
+});
       return items;
     } catch (e2) {
       console.error('[Collection] Fallback gagal:', e2);
