@@ -1,0 +1,438 @@
+/* ============================================================
+   ARCANE COMMUNITY — DASHBOARD
+   Statistik, admin list, gallery, form editor, tabel user, console
+   ============================================================ */
+
+/* ===== 1. PAGE HEADER ===== */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.page h1 {
+  font-family: var(--font-head);
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.page-sub {
+  color: var(--text-mute);
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+.page-header .page-sub {
+  margin-bottom: 0;
+}
+
+/* ===== 2. STATISTIK ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: .2s;
+}
+
+.stat-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow);
+}
+
+.stat-card > i,
+.stat-card > svg {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+  color: var(--blue);
+  background: rgba(30,155,224,.1);
+  padding: 12px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-sizing: content-box;
+}
+
+.stat-num {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-mute);
+}
+
+/* ===== 3. ADMIN LIST ===== */
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.admin-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: .2s;
+}
+
+.admin-item:hover {
+  border-color: var(--blue);
+}
+
+.admin-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-item-info h4 {
+  font-family: var(--font-head);
+  font-size: 15px;
+  margin-bottom: 3px;
+  word-wrap: break-word;
+}
+
+.admin-item-info p {
+  font-size: 13px;
+  color: var(--text-mute);
+  word-wrap: break-word;
+}
+
+.admin-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.admin-item-actions button {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: .2s;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.admin-item-actions button:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.admin-item-actions button.danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.admin-item-actions button i,
+.admin-item-actions button svg {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+/* ===== 4. ADMIN GALLERY ===== */
+.admin-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.admin-gallery-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.admin-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-gallery-item .delete-gallery {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  background: rgba(239,68,68,.9);
+  color: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .2s;
+  border: none;
+  cursor: pointer;
+}
+
+.admin-gallery-item .delete-gallery:hover {
+  background: var(--danger);
+}
+
+.admin-gallery-item .delete-gallery i,
+.admin-gallery-item .delete-gallery svg {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+/* ===== 5. DUMMY CARD / SETTINGS CARD ===== */
+.dummy-card,
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+}
+
+.dummy-card h3,
+.settings-card h3 {
+  font-family: var(--font-head);
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.dummy-card p,
+.settings-card p {
+  font-size: 13.5px;
+  color: var(--text-mute);
+}
+
+/* ===== 6. CONSOLE LOG ===== */
+.log-filter {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.log-filter-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.log-filter-btn:hover {
+  border-color: var(--blue);
+}
+
+.log-filter-btn.active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+.log-clear-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--danger);
+  font-family: inherit;
+  transition: .2s;
+}
+
+.log-clear-btn:hover {
+  border-color: var(--danger);
+  background: rgba(239,68,68,.08);
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.log-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.log-item:hover {
+  border-color: var(--blue);
+  transform: translateX(2px);
+}
+
+.log-item.success { border-left-color: var(--success); }
+.log-item.warning { border-left-color: var(--warning); }
+.log-item.error   { border-left-color: var(--danger); }
+
+.log-time {
+  color: var(--text-mute);
+  font-size: 11px;
+  margin-right: 8px;
+}
+
+.log-icon { margin-right: 6px; }
+.log-message { color: var(--text); }
+
+.log-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--blue);
+  font-size: 11px;
+}
+
+.log-empty {
+  color: var(--text-mute);
+  text-align: center;
+  padding: 40px 0;
+}
+
+.log-detail {
+  background: var(--black);
+  color: #00FF00;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.log-detail .label { color: #6B7280; }
+.log-detail .value { color: #00FF00; }
+.log-detail .error-type {
+  color: var(--danger);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* ===== 7. LOG BADGE ===== */
+.log-badge {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  display: none;
+}
+
+.log-badge.show { display: block; }
+
+/* ===== 8. KONTEN TABS (untuk halaman konten) ===== */
+.konten-tab {
+  transition: color .2s, border-color .2s;
+}
+
+/* ===== 9. UPLOAD PROGRESS ===== */
+#uploadProgress {
+  margin-top: 14px;
+}
+
+#uploadBar {
+  height: 6px;
+  background: var(--blue);
+  border-radius: 3px;
+  transition: width .3s ease;
+}
+
+#uploadText {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ===== 10. USER STATS ===== */
+#userStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* ===== 11. RESPONSIVE — 768px ===== */
+@media (max-width: 768px) {
+  .page h1 { font-size: 22px; }
+  .page-sub { font-size: 13.5px; }
+  .page-header { margin-bottom: 16px; }
+
+  .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stat-card { padding: 16px; }
+  .stat-num { font-size: 20px; }
+
+  .admin-item {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-item-info h4 { font-size: 14px; }
+  .admin-item-info p { font-size: 12px; }
+
+  .admin-item-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .admin-item-actions button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .admin-gallery { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+
+  .log-detail { font-size: 11px; padding: 12px; }
+}
