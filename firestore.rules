@@ -1,0 +1,115 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== Helper Functions =====
+    
+    // Cek apakah user login
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Ambil data user dari collection users
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // Cek apakah user active
+    function isActive() {
+      return isSignedIn() && getUserData().active == true;
+    }
+    
+    // Cek apakah user owner
+    function isOwner() {
+      return isActive() && getUserData().role == 'owner';
+    }
+    
+    // Cek apakah user operator atau owner
+    function isOperator() {
+      return isActive() && (
+        getUserData().role == 'operator' ||
+        getUserData().role == 'owner'
+      );
+    }
+    
+    // Cek apakah dokumen archived
+    function isArchived() {
+      return resource.data.archived == true;
+    }
+
+    // ===== Collection: users =====
+    match /users/{uid} {
+      // User bisa baca data sendiri
+      allow read: if isSignedIn() && (request.auth.uid == uid || isOwner());
+      
+      // Cuma owner yang bisa tulis
+      allow write: if isOwner();
+      
+      // User bisa update username & active sendiri
+      allow update: if isSignedIn() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role;
+    }
+
+    // ===== Collection: news =====
+    match /news/{docId} {
+      // Semua orang bisa baca yang tidak archived
+      allow read: if !isArchived() || isOperator();
+      
+      // Operator & owner bisa tulis
+      allow create, update: if isOperator();
+      
+      // Cuma owner yang bisa hapus permanen
+      allow delete: if isOwner();
+    }
+
+    // ===== Collection: events =====
+    match /events/{docId} {
+      allow read: if !isArchived() || isOperator();
+      allow create, update: if isOperator();
+      allow delete: if isOwner();
+    }
+
+    // ===== Collection: gallery =====
+    match /gallery/{docId} {
+      allow read: if !isArchived() || isOperator();
+      allow create, update: if isOperator();
+      allow delete: if isOwner();
+    }
+
+    // ===== Collection: categories =====
+    match /categories/{docId} {
+      // Semua orang bisa baca (buat render warna & ikon)
+      allow read: if true;
+      
+      // Cuma owner yang bisa tulis
+      allow write: if isOwner();
+    }
+
+    // ===== Collection: site =====
+    match /site/{docId} {
+      // Semua orang bisa baca (teks publik)
+      allow read: if true;
+      
+      // Cuma owner yang bisa tulis
+      allow write: if isOwner();
+    }
+
+    // ===== Collection: activity =====
+    match /activity/{docId} {
+      // Cuma owner yang bisa baca
+      allow read: if isOwner();
+      
+      // Semua yang login (operator & owner) bisa tambah log
+      allow create: if isOperator();
+      
+      // Nggak ada yang bisa update/delete
+      allow update, delete: if false;
+    }
+
+    // ===== Default: deny all =====
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
