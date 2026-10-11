@@ -5,7 +5,6 @@ import './theme.js';
 import './i18n.js';
 
 import { login, getAuthError, getUser, ready } from './auth.js';
-import { logout } from './auth.js';
 
 let isLoggingIn = false;
 
@@ -37,10 +36,13 @@ async function init() {
 // ===== Bind form =====
 function bindForm() {
   const form = document.getElementById('loginForm');
-  if (!form) return;
+  if (!form) {
+    console.error('[Login] Form tidak ditemukan!');
+    return;
+  }
 
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();  // ← cegah reload
 
     if (isLoggingIn) return;
 
@@ -63,11 +65,17 @@ function bindForm() {
     } catch (err) {
       console.error('[Login] Gagal:', err);
       isLoggingIn = false;
-      errorEl.textContent = err.message || getAuthError(err);
+
+      let msg = 'Terjadi kesalahan. Coba lagi.';
+      if (err && err.message) msg = err.message;
+
+      errorEl.textContent = msg;
       btn.disabled = false;
       btnText.textContent = window.ArcaneI18n ? window.ArcaneI18n.t('login.btn') : 'Masuk';
     }
   });
+
+  console.log('[Login] Form ter-bind');
 }
 
 // ===== Toggle password =====
@@ -78,7 +86,7 @@ function bindTogglePassword() {
 
   if (!toggle || !input) return;
 
-  toggle.addEventListener('click', function() {
+  toggle.addEventListener('click', function () {
     const isPass = input.type === 'password';
     input.type = isPass ? 'text' : 'password';
 

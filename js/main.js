@@ -3,8 +3,10 @@
 import './logger.js';
 import './theme.js';
 import './i18n.js';
+import './ui/toast.js';
+import './ui/form.js';
 
-import { getUser, getUserData, getRole, isLoggedIn, logout, ready } from './auth.js';
+import { getUser, getUserData, logout, ready } from './auth.js';
 import * as sidebar from './ui/sidebar.js';
 import { initModal } from './ui/modal.js';
 import { initReveal, observeReveal, observeLazyImages } from './ui/reveal.js';
@@ -12,8 +14,6 @@ import * as renderPublic from './ui/render-public.js';
 import * as news from './data/news.js';
 import * as events from './data/events.js';
 import * as gallery from './data/gallery.js';
-import * as site from './data/site.js';
-import * as categories from './data/categories.js';
 
 // ===== Init =====
 async function init() {
@@ -27,6 +27,9 @@ async function init() {
 
   // 2. Init render publik (load site data)
   await renderPublic.init();
+
+  // 3. Bind sidebar nav awal (dashboard menu dirender nanti)
+  bindSidebarNav();
 
   // 4. Bind logout
   bindLogout();
@@ -63,17 +66,9 @@ async function init() {
   await loadAndRenderPublic();
 
   // 11. Listen perubahan bahasa — re-render
-  window.addEventListener('lang-changed', async function() {
+  window.addEventListener('lang-changed', async function () {
     console.log('[Main] Bahasa berubah — re-render');
     await renderPublic.renderAll();
-
-    // Re-apply text dari site
-    await renderPublic.init();
-  });
-
-  // 12. Listen perubahan theme
-  window.addEventListener('theme-changed', function() {
-    // Log re-render handled di theme.js
   });
 
   console.log('[Main] Siap');
@@ -84,7 +79,7 @@ async function setupDashboard(userData) {
   // Tampilkan tombol dashboard (buat owner & operator)
   const dashBtn = document.getElementById('toggleSidebar');
   if (dashBtn) {
-    if (userData.role === 'owner' || userData.role === 'operator') {
+    if (userData && (userData.role === 'owner' || userData.role === 'operator')) {
       dashBtn.style.display = 'flex';
     } else {
       dashBtn.style.display = 'none';
@@ -105,18 +100,18 @@ async function setupDashboard(userData) {
 
 // ===== Bind sidebar nav =====
 function bindSidebarNav() {
-  document.querySelectorAll('.sidebar-nav-item[data-page]').forEach(function(item) {
+  document.querySelectorAll('.sidebar-nav-item[data-page]').forEach(function (item) {
     // Skip kalau udah pernah bind
     if (item.dataset.bound === 'yes') return;
     item.dataset.bound = 'yes';
 
-    item.addEventListener('click', function(e) {
+    item.addEventListener('click', function (e) {
       e.preventDefault();
       const page = item.dataset.page;
 
       // Kalau 'home' — tutup sidebar & tampilkan home
       if (page === 'home') {
-        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
         const home = document.querySelector('[data-page-content="home"]');
         if (home) home.classList.add('active');
         sidebar.close();
@@ -134,9 +129,9 @@ function bindSidebarNav() {
   const backBtn = document.getElementById('backToWeb');
   if (backBtn && !backBtn.dataset.bound) {
     backBtn.dataset.bound = 'yes';
-    backBtn.addEventListener('click', function(e) {
+    backBtn.addEventListener('click', function (e) {
       e.preventDefault();
-      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
       const home = document.querySelector('[data-page-content="home"]');
       if (home) home.classList.add('active');
       sidebar.close();
@@ -148,9 +143,9 @@ function bindSidebarNav() {
   const brand = document.getElementById('brandHome');
   if (brand && !brand.dataset.bound) {
     brand.dataset.bound = 'yes';
-    brand.addEventListener('click', function(e) {
+    brand.addEventListener('click', function (e) {
       e.preventDefault();
-      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
       const home = document.querySelector('[data-page-content="home"]');
       if (home) home.classList.add('active');
       sidebar.close();
@@ -164,7 +159,7 @@ function bindLogout() {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn && !logoutBtn.dataset.bound) {
     logoutBtn.dataset.bound = 'yes';
-    logoutBtn.addEventListener('click', function() {
+    logoutBtn.addEventListener('click', function () {
       logout();
     });
   }
@@ -172,7 +167,7 @@ function bindLogout() {
   const sidebarLogout = document.getElementById('sidebarLogout');
   if (sidebarLogout && !sidebarLogout.dataset.bound) {
     sidebarLogout.dataset.bound = 'yes';
-    sidebarLogout.addEventListener('click', function() {
+    sidebarLogout.addEventListener('click', function () {
       logout();
     });
   }
@@ -182,9 +177,9 @@ function bindLogout() {
 async function loadAndRenderPublic() {
   try {
     const [newsList, eventsList, galleryList] = await Promise.all([
-      news.list({ includeArchived: false }).catch(function() { return []; }),
-      events.list({ includeArchived: false }).catch(function() { return []; }),
-      gallery.list({ includeArchived: false }).catch(function() { return []; })
+      news.list({ includeArchived: false }).catch(function () { return []; }),
+      events.list({ includeArchived: false }).catch(function () { return []; }),
+      gallery.list({ includeArchived: false }).catch(function () { return []; })
     ]);
 
     await renderPublic.renderAll(newsList, eventsList, galleryList);
@@ -195,7 +190,6 @@ async function loadAndRenderPublic() {
       galleryList.length + ' gambar');
   } catch (e) {
     console.error('[Main] Load data publik gagal:', e);
-    // Tetap render dengan data kosong
     await renderPublic.renderAll([], [], []);
   }
 }
@@ -205,7 +199,6 @@ function showWelcomeBanner(username, role) {
   const banner = document.getElementById('welcomeBanner');
   if (!banner) return;
 
-  // Cek udah pernah muncul di sesi ini
   if (sessionStorage.getItem('arcane-welcome-shown') === 'yes') {
     banner.remove();
     return;
@@ -228,10 +221,10 @@ function showWelcomeBanner(username, role) {
 
   sessionStorage.setItem('arcane-welcome-shown', 'yes');
 
-  setTimeout(function() { banner.classList.add('visible'); }, 100);
-  setTimeout(function() {
+  setTimeout(function () { banner.classList.add('visible'); }, 100);
+  setTimeout(function () {
     banner.classList.remove('visible');
-    setTimeout(function() { banner.remove(); }, 600);
+    setTimeout(function () { banner.remove(); }, 600);
   }, 3000);
 }
 

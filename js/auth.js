@@ -16,16 +16,16 @@ let currentUser = null;
 let currentUserData = null;
 let isReady = false;
 let readyResolve = null;
-const readyPromise = new Promise(function(resolve) { readyResolve = resolve; });
+const readyPromise = new Promise(function (resolve) { readyResolve = resolve; });
 
 // ===== Error messages =====
 const AUTH_ERRORS = {
-  'auth/invalid-email':        'Format email tidak valid.',
-  'auth/user-disabled':        'Akun ini dinonaktifkan.',
-  'auth/user-not-found':       'Email tidak terdaftar.',
-  'auth/wrong-password':       'Password salah.',
-  'auth/invalid-credential':   'Email atau password salah.',
-  'auth/too-many-requests':    'Terlalu banyak percobaan. Coba lagi nanti.',
+  'auth/invalid-email': 'Format email tidak valid.',
+  'auth/user-disabled': 'Akun ini dinonaktifkan.',
+  'auth/user-not-found': 'Email tidak terdaftar.',
+  'auth/wrong-password': 'Password salah.',
+  'auth/invalid-credential': 'Email atau password salah.',
+  'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
   'auth/network-request-failed': 'Koneksi bermasalah. Cek internet.',
   'auth/operation-not-allowed': 'Login email/password belum diaktifkan.'
 };
@@ -44,38 +44,48 @@ export async function login(email, password) {
     throw new Error('Email dan password wajib diisi.');
   }
 
-  // Login ke Firebase Auth
-  const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
-
-  // Ambil data user dari Firestore
-  const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
-
-  if (!userDoc.exists()) {
-    await signOut(auth);
-    throw new Error('Akun belum di-setup. Hubungi owner.');
+  // Cek auth tersedia
+  if (!auth) {
+    throw new Error('Firebase belum siap. Refresh halaman.');
   }
 
-  const data = userDoc.data();
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
 
-  // Cek active
-  if (data.active === false) {
-    await signOut(auth);
-    throw new Error('Akun ini dinonaktifkan. Hubungi owner.');
+    const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
+
+    if (!userDoc.exists()) {
+      await signOut(auth);
+      throw new Error('Akun belum di-setup. Hubungi owner.');
+    }
+
+    const data = userDoc.data();
+
+    if (data.active === false) {
+      await signOut(auth);
+      throw new Error('Akun ini dinonaktifkan. Hubungi owner.');
+    }
+
+    if (!data.username) {
+      await signOut(auth);
+      throw new Error('Username belum di-setup. Hubungi owner.');
+    }
+
+    return {
+      uid: cred.user.uid,
+      email: cred.user.email,
+      username: data.username,
+      role: data.role || 'member',
+      active: data.active !== false
+    };
+  } catch (err) {
+    // Kalau error dari Firebase, translate ke pesan user
+    if (err && err.code) {
+      throw new Error(getAuthError(err));
+    }
+    // Kalau error custom kita, lempar apa adanya
+    throw err;
   }
-
-  // Cek username
-  if (!data.username) {
-    await signOut(auth);
-    throw new Error('Username belum di-setup. Hubungi owner.');
-  }
-
-  return {
-    uid: cred.user.uid,
-    email: cred.user.email,
-    username: data.username,
-    role: data.role || 'member',
-    active: data.active !== false
-  };
 }
 
 // ===== Logout =====
@@ -126,21 +136,40 @@ export function isAuthReady() {
 }
 
 // ===== Auth state listener =====
-onAuthStateChanged(auth, async function(user) {
+onAuthStateChanged(auth, async function (user) {
   if (user) {
     try {
       const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const data = userDoc.exists() ? userDoc.data() : {};
+
+      // Dokumen user tidak ada
+      if (!userDoc.exists()) {
+        console.warn('[Auth] Dokumen user tidak ada di Firestore');
+        currentUser = null;
+        currentUserData = null;
+        await signOut(auth);
+        // JANGAN redirect — biarkan main.js yang handle
+        if (!isReady) {
+          isReady = true;
+          if (readyResolve) readyResolve();
+        }
+        return;
+      }
+
+      const data = userDoc.data();
 
       // Cek active
       if (data.active === false) {
-  console.warn('[Auth] Akun nonaktif — logout');
-  currentUser = null;
-  currentUserData = null;
-  await signOut(auth);
-  window.location.href = 'login.html';
-  return;
-}
+        console.warn('[Auth] Akun nonaktif — logout');
+        currentUser = null;
+        currentUserData = null;
+        await signOut(auth);
+        // JANGAN redirect — biarkan main.js yang handle
+        if (!isReady) {
+          isReady = true;
+          if (readyResolve) readyResolve();
+        }
+        return;
+      }
 
       currentUser = {
         uid: user.uid,
