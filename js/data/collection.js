@@ -35,25 +35,28 @@ export async function list(collectionName, options) {
 
     const snap = await getDocs(q);
     const items = [];
-    snap.forEach(function(d) {
-      items.push({ id: d.id, ...d.data() });
+    snap.forEach(function (d) {
+      const data = d.data();
+      // Filter client-side untuk dokumen lama tanpa field archived
+      if (includeArchived || data.archived !== true) {
+        items.push({ id: d.id, ...data });
+      }
     });
 
     return items.slice(0, maxItems);
   } catch (e) {
-    // Fallback — kalau index belum ada
     console.warn('[Collection] Query gagal, fallback client-side:', e.message);
     try {
       const ref = collection(db, collectionName);
       const snap = await getDocs(ref);
       const items = [];
-      snap.forEach(function(d) {
-  const data = d.data();
-  if (includeArchived || data.archived !== true) {
-    items.push({ id: d.id, ...data });
-  }
-});
-      return items;
+      snap.forEach(function (d) {
+        const data = d.data();
+        if (includeArchived || data.archived !== true) {
+          items.push({ id: d.id, ...data });
+        }
+      });
+      return items.slice(0, maxItems);
     } catch (e2) {
       console.error('[Collection] Fallback gagal:', e2);
       throw e2;
@@ -68,7 +71,7 @@ export async function listArchived(collectionName) {
     const q = query(ref, where('archived', '==', true));
     const snap = await getDocs(q);
     const items = [];
-    snap.forEach(function(d) {
+    snap.forEach(function (d) {
       items.push({ id: d.id, ...d.data() });
     });
     return items;
@@ -102,7 +105,6 @@ export async function add(collectionName, data) {
 
     const ref = await addDoc(collection(db, collectionName), payload);
 
-    // Log aktivitas
     await logActivity({
       action: 'create',
       collection: collectionName,
@@ -125,13 +127,11 @@ export async function update(collectionName, id, data) {
       updatedAt: serverTimestamp()
     };
 
-    // Jangan timpa createdAt & archived
     delete payload.createdAt;
     delete payload.archived;
 
     await updateDoc(doc(db, collectionName, id), payload);
 
-    // Log aktivitas
     await logActivity({
       action: 'update',
       collection: collectionName,
@@ -154,7 +154,6 @@ export async function archive(collectionName, id) {
       updatedAt: serverTimestamp()
     });
 
-    // Log aktivitas
     await logActivity({
       action: 'archive',
       collection: collectionName,
