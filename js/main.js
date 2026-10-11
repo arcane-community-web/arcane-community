@@ -4,7 +4,6 @@ import './logger.js';
 import './theme.js';
 import './i18n.js';
 
-import { auth, db } from './firebase.js';
 import { getUser, getUserData, getRole, isLoggedIn, logout, ready } from './auth.js';
 import * as sidebar from './ui/sidebar.js';
 import { initModal } from './ui/modal.js';
@@ -28,9 +27,6 @@ async function init() {
 
   // 2. Init render publik (load site data)
   await renderPublic.init();
-
-  // 3. Bind sidebar nav (menu dashboard)
-  bindSidebarNav();
 
   // 4. Bind logout
   bindLogout();

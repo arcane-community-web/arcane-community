@@ -134,13 +134,13 @@ onAuthStateChanged(auth, async function(user) {
 
       // Cek active
       if (data.active === false) {
-        console.warn('[Auth] Akun nonaktif — logout');
-        await signOut(auth);
-        currentUser = null;
-        currentUserData = null;
-        window.location.href = 'login.html';
-        return;
-      }
+  console.warn('[Auth] Akun nonaktif — logout');
+  currentUser = null;
+  currentUserData = null;
+  await signOut(auth);
+  window.location.href = 'login.html';
+  return;
+}
 
       currentUser = {
         uid: user.uid,
