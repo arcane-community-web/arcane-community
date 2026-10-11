@@ -1,5 +1,4 @@
 // ===== REVEAL — Fade-up + Lazy Load =====
-// Satu IntersectionObserver untuk semua
 
 let revealObserver = null;
 let lazyObserver = null;
@@ -7,10 +6,12 @@ let initialized = false;
 
 // ===== Init =====
 export function initReveal() {
-  // Observer untuk fade-up
+  if (initialized) return;
+  initialized = true;
+
   if (!revealObserver && 'IntersectionObserver' in window) {
-    revealObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
+    revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('reveal-visible');
           revealObserver.unobserve(entry.target);
@@ -19,10 +20,9 @@ export function initReveal() {
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   }
 
-  // Observer untuk lazy image
   if (!lazyObserver && 'IntersectionObserver' in window) {
-    lazyObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
+    lazyObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           const img = entry.target;
           const src = img.dataset.src;
@@ -45,11 +45,11 @@ export function observeReveal(elements) {
   const els = elements || document.querySelectorAll('.reveal:not(.reveal-visible)');
 
   if (!('IntersectionObserver' in window)) {
-    els.forEach(function(el) { el.classList.add('reveal-visible'); });
+    els.forEach(function (el) { el.classList.add('reveal-visible'); });
     return;
   }
 
-  els.forEach(function(el) {
+  els.forEach(function (el) {
     if (!el.classList.contains('reveal')) el.classList.add('reveal');
     revealObserver.observe(el);
   });
@@ -62,7 +62,7 @@ export function observeLazyImages(elements) {
   const imgs = elements || document.querySelectorAll('img[data-src]');
 
   if (!('IntersectionObserver' in window)) {
-    imgs.forEach(function(img) {
+    imgs.forEach(function (img) {
       const src = img.dataset.src;
       if (src) {
         img.src = src;
@@ -73,18 +73,18 @@ export function observeLazyImages(elements) {
     return;
   }
 
-  imgs.forEach(function(img) {
+  imgs.forEach(function (img) {
     lazyObserver.observe(img);
   });
 }
 
-// ===== Reset (buat re-render) =====
+// ===== Reset =====
 export function resetReveal(container) {
   const root = container || document;
-  root.querySelectorAll('.reveal-visible').forEach(function(el) {
+  root.querySelectorAll('.reveal-visible').forEach(function (el) {
     el.classList.remove('reveal-visible');
   });
-  root.querySelectorAll('.reveal').forEach(function(el) {
+  root.querySelectorAll('.reveal').forEach(function (el) {
     el.classList.remove('reveal');
   });
 }

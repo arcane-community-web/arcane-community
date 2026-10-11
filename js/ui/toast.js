@@ -1,5 +1,7 @@
 // ===== TOAST — Notifikasi Singkat =====
 
+import { escapeHtml } from '../utils/escape.js';
+
 let containerEl = null;
 
 // ===== Init container =====
@@ -39,21 +41,20 @@ export function show(message, type, duration) {
     'opacity:0;transform:translateX(30px);transition:opacity .3s ease,transform .3s ease;';
 
   toast.innerHTML =
-    '<span style="font-weight:700;font-size:16px;flex-shrink:0;">' + color.icon + '</span>';
+    '<span style="font-weight:700;font-size:16px;flex-shrink:0;">' + color.icon + '</span>' +
+    '<span style="flex:1;">' + escapeHtml(message) + '</span>';
 
   container.appendChild(toast);
 
-  // Animate in
-  requestAnimationFrame(function() {
+  requestAnimationFrame(function () {
     toast.style.opacity = '1';
     toast.style.transform = 'translateX(0)';
   });
 
-  // Auto remove
-  setTimeout(function() {
+  setTimeout(function () {
     toast.style.opacity = '0';
     toast.style.transform = 'translateX(30px)';
-    setTimeout(function() {
+    setTimeout(function () {
       if (toast.parentNode) toast.parentNode.removeChild(toast);
     }, 300);
   }, duration);
@@ -66,17 +67,6 @@ export function success(msg, duration) { show(msg, 'success', duration); }
 export function error(msg, duration)   { show(msg, 'error', duration || 5000); }
 export function warning(msg, duration) { show(msg, 'warning', duration); }
 export function info(msg, duration)    { show(msg, 'info', duration); }
-
-// ===== Helper =====
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 // ===== Expose =====
 window.ArcaneToast = {

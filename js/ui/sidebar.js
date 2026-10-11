@@ -7,13 +7,16 @@ let initialized = false;
 
 // ===== Init =====
 export function initSidebar() {
+  if (initialized) return;
+  initialized = true;
+
   sidebarEl = document.getElementById('sidebar');
   backdropEl = document.getElementById('sidebarBackdrop');
   toggleBtn = document.getElementById('toggleSidebar');
 
   // Toggle
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', function(e) {
+    toggleBtn.addEventListener('click', function (e) {
       e.preventDefault();
       toggle();
     });
@@ -22,7 +25,7 @@ export function initSidebar() {
   // Close button
   const closeBtn = document.getElementById('closeSidebar');
   if (closeBtn) {
-    closeBtn.addEventListener('click', function(e) {
+    closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       close();
     });
@@ -34,7 +37,7 @@ export function initSidebar() {
   }
 
   // ESC
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && sidebarEl && sidebarEl.classList.contains('open')) {
       close();
     }
