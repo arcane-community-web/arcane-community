@@ -18,7 +18,7 @@
 
 /* ===== 2. WEB (visibility) ===== */
 .web {
-  opacity: 0;
+  opacity: 1;
   transition: opacity .5s ease;
 }
 .web.visible { opacity: 1; }
