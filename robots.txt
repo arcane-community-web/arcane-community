@@ -1,0 +1,15 @@
+# ARCANE Community — privasi
+User-agent: *
+Disallow: /
+
+# Blokir crawler AI juga (opsional)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+Sitemap: /sitemap.xml
