@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4faff">
+<meta name="description" content="ARCANE Community — ruang tenang untuk berbagi, berkarya, dan bertumbuh bersama.">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, notranslate">
+<link rel="icon" type="image/png" href="assets/logo-arcane.png">
+<title>ARCANE Community</title>
+<style>
+/* =========================================================
+   1. TOKENS
+   ========================================================= */
+:root{
+  --blue:#1677e8;--blue2:#42b4ff;--navy:#17345c;--ink:#23364d;--muted:#667b91;
+  --sky:#e8f5ff;--line:#cde6fb;--bg:#f7fbff;--surface:#fff;--surface2:#eef8ff;--surface3:#e9f6ff;
+  --header:#ffffffed;
+  --shadow:0 20px 60px #347fb21a;
+  --shadow-s:0 12px 30px #347fb21a;
+  --shadow-lift:0 12px 28px -8px rgba(22,119,232,.28);
+  --btn-ink:#fff;--fs-base:16px;
+  --ease-out:cubic-bezier(.2,.7,.2,1);
+  --blob1:rgba(66,180,255,.20);--blob2:rgba(22,119,232,.12);
+  --blob3:rgba(147,197,253,.18);--blob4:rgba(103,232,249,.15);
+}
+html[data-theme="dark"]{
+  --blue:#5aabff;--blue2:#8fd0ff;--navy:#e8f2ff;--ink:#bed2e6;--muted:#8ea6bd;
+  --sky:#12293e;--line:#1d3853;--bg:#081321;--surface:#0e1d2e;--surface2:#122a41;--surface3:#123049;
+  --header:#0b1626e6;
+  --shadow:0 20px 60px #00000066;
+  --shadow-s:0 12px 30px #00000059;
+  --shadow-lift:0 12px 28px -8px rgba(0,0,0,.55);
+  --btn-ink:#04121f;
+  --blob1:rgba(30,90,150,.42);--blob2:rgba(20,60,110,.34);
+  --blob3:rgba(40,100,150,.28);--blob4:rgba(20,90,150,.30);
+}
+
+/* =========================================================
+   2. RESET & BASE
+   ========================================================= */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:var(--fs-base);background:var(--bg)}
+body{
+  margin:0;min-height:100vh;background:transparent;color:var(--ink);line-height:1.6;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  transition:color .35s ease;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(ellipse 45% 40% at 8% 8%, var(--blob1), transparent),
+    radial-gradient(ellipse 40% 40% at 92% 15%, var(--blob2), transparent),
+    radial-gradient(ellipse 45% 40% at 75% 85%, var(--blob3), transparent),
+    radial-gradient(ellipse 40% 40% at 15% 90%, var(--blob4), transparent);
+  background-repeat:no-repeat;
+  transition:background-color .35s ease;
+}
+a{text-decoration:none;color:inherit}
+img{max-width:100%}
+p{color:var(--muted);margin:0}
+h1,h2,h3{margin:0}
+button{font-family:inherit}
+
+a:focus-visible,button:focus-visible,summary:focus-visible{
+  outline:2px solid var(--blue);outline-offset:3px;border-radius:6px;
+}
+
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+
+/* =========================================================
+   3. SCROLL PROGRESS
+   ========================================================= */
+.progress{
+  position:fixed;top:0;left:0;height:3px;width:0;z-index:80;
+  border-radius:0 3px 3px 0;
+  background:var(--blue);
+  box-shadow:0 0 8px rgba(22,119,232,.55),0 0 16px rgba(22,119,232,.3);
+  transition:width .1s linear;
+}
+
+/* =========================================================
+   4. HEADER & NAV
+   ========================================================= */
+.top{
+  position:sticky;top:0;z-index:40;
+  background:var(--header);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  border-radius: 0 0 20px 20px;
+  box-shadow: var(--shadow-s);
+  transition:background .35s ease,border-color .35s ease;
+}
+nav.mainnav{
+  height:64px;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;position:relative;
+}
+.brand{
+  display:flex;align-items:center;gap:8px;
+  font-size:.75rem;font-weight:900;letter-spacing:.1em;color:var(--navy);
+  flex:0 0 auto;
+}
+.brand img{width:36px;height:36px;object-fit:contain;transition:transform .35s var(--ease-out)}
+.brand:hover img{transform:scale(1.08) rotate(-2deg)}
+.brand small{font-size:.45rem;letter-spacing:.2em}
+
+.links{
+  display:flex;gap:16px;font-size:.75rem;font-weight:700;color:var(--muted);
+  flex:1 1 auto;justify-content:center;
+}
+.links a{
+  position:relative;overflow:hidden;white-space:nowrap;padding:4px 0;
+  transition:color .2s;
+}
+.links a:hover{color:var(--blue)}
+.links a.active{color:var(--blue)}
+.links a.active::after{
+  content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;
+  background:var(--blue);border-radius:2px;
+}
+
+.nav-tools{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.icon-btn{
+  width:36px;height:36px;display:grid;place-items:center;border-radius:10px;
+  cursor:pointer;background:var(--surface);border:1px solid var(--line);
+  color:var(--navy);font-size:.9rem;
+  transition:transform .35s var(--ease-out),box-shadow .2s,background .3s;
+}
+#themeToggle:hover{transform:rotate(180deg) scale(1.05);box-shadow:var(--shadow-s)}
+.icon-btn:active{transform:scale(.95)}
+.menu{display:none}
+
+/* =========================================================
+   5. BUTTONS
+   ========================================================= */
+.btn{
+  position:relative;overflow:hidden;isolation:isolate;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:99px;padding:10px 20px;
+  background:var(--blue);color:var(--btn-ink);
+  font-size:.85rem;font-weight:800;line-height:1.2;
+  border:0;cursor:pointer;text-align:center;
+  box-shadow:0 4px 12px rgba(22,119,232,.2);
+  transition:transform .25s var(--ease-out),box-shadow .25s,filter .2s,border-color .2s;
+}
+.btn::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:translateX(-120%);
+  transition:transform .6s var(--ease-out);
+}
+.btn:hover::before{transform:translateX(120%)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(22,119,232,.3);filter:brightness(1.04)}
+.btn:active{transform:translateY(0) scale(.98)}
+
+/* =========================================================
+   6. HERO
+   ========================================================= */
+.hero{padding:80px 0 60px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:40px}
+
+.eyebrow{
+  display:inline-block;padding:6px 12px;border:1px solid var(--line);
+  background:var(--sky);border-radius:99px;letter-spacing:.1em;
+  font-size:.7rem;font-weight:900;color:var(--blue);text-transform:uppercase;
+}
+
+.hero-title{
+  font-size:clamp(3rem,7vw,4.5rem);
+  line-height:1;letter-spacing:0.08em;
+  color:var(--navy);margin:16px 0 8px;
+  font-weight:900;
+}
+.hero-title span {
+  display: block;
+  font-size: 0.6em;
+  font-weight: 800;
+  color: var(--blue);
+  letter-spacing: 0;
+  margin-top: 2px;
+}
+.hero-slogan {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 0;
+  margin-top: 8px;
+  font-style: italic;
+  line-height: 1.1;
+}
+.hero-trans {
+  font-size: .9rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.hero p{max-width:540px;font-size:.95rem;line-height:1.6}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+
+/* Logo Art */
+.art{position:relative;display:grid;place-items:center;min-height:320px}
+.orb{
+  position:absolute;width:110%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,var(--surface),#d9f0ff);
+  box-shadow:0 10px 40px #6db8e51a;
+  animation:orb-breathe 7s ease-in-out infinite;
+}
+html[data-theme="dark"] .orb{background:radial-gradient(circle,var(--surface),#12304a)}
+@keyframes orb-breathe{
+  0%,100%{transform:scale(1);opacity:.9;filter:hue-rotate(0deg)}
+  50%{transform:scale(1.045);opacity:1;filter:hue-rotate(8deg)}
+}
+
+.logo-card{
+  position:relative;width:min(100%,360px,65vh);aspect-ratio:1/1;
+  display:grid;place-items:center;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:24px;box-shadow:var(--shadow);
+  transform:rotate(1deg);
+  will-change:transform;
+  transition:box-shadow .4s ease;
+}
+.logo-card img{
+  width:85%;height:85%;
+  object-fit:contain;
+}
+
+.chip{
+  position:absolute;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;
+  font-size:.75rem;font-weight:800;color:var(--navy);
+  box-shadow:var(--shadow-s);
+  animation:chip-float 4.5s ease-in-out infinite;
+}
+.chip small{display:block;color:var(--muted);font-weight:600;font-size:.65rem;margin-top:2px}
+.c1{left:0;top:32px}
+.c2{right:0;bottom:24px;animation-delay:-2.2s}
+@keyframes chip-float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+
+/* =========================================================
+   7. SECTIONS
+   ========================================================= */
+.section{padding:80px 0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:32px}
+.head p{max-width:500px;font-size:.9rem}
+h2{font-size:clamp(1.6rem,2.5vw,2.2rem);line-height:1.1;letter-spacing:-.03em;color:var(--navy);margin:8px 0}
+
+.kicker{
+  font-size:.7rem;font-weight:900;letter-spacing:.12em;
+  color:var(--blue);text-transform:uppercase;
+}
+
+/* =========================================================
+   8. ABOUT & PRINSIP (FLAT)
+   ========================================================= */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.about p{margin:16px 0;font-size:.95rem;line-height:1.7}
+
+.principles{display:grid;grid-template-columns:repeat(2,1fr);gap:24px 32px}
+.principle h3{color:var(--navy);margin:6px 0;font-size:1rem;font-weight:800}
+.principle p{font-size:.8rem;margin:0;line-height:1.5;color:var(--muted)}
+.num{font-size:.65rem;color:var(--blue);font-weight:900;letter-spacing:.12em;display:block}
+
+/* =========================================================
+   9. RUANG
+   ========================================================= */
+.ruang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ruang-card {
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;
+  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),border-color .25s ease;
+}
+.ruang-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--blue2)}
+.ruang-icon{
+  font-size:1.5rem;background:var(--sky);display:grid;place-items:center;
+  width:48px;height:48px;border-radius:12px;margin-bottom:16px;
+  transition:transform .3s var(--ease-out),background .3s;
+}
+.ruang-card:hover .ruang-icon{transform:rotate(8deg) scale(1.08)}
+.ruang-card h3{color:var(--navy);margin:0 0 8px;font-size:1.1rem}
+.ruang-card p{font-size:.85rem;margin:0 0 16px;line-height:1.6}
+.status-badge{
+  display:inline-block;border:1px solid var(--line);border-radius:99px;
+  padding:4px 12px;background:var(--surface2);color:var(--muted);
+  font-size:.7rem;font-weight:800;letter-spacing:.05em;
+}
+.status-badge.active {
+  background: var(--sky); color: var(--blue); border-color: var(--blue2);
+}
+
+/* =========================================================
+   10. SCHEDULE
+   ========================================================= */
+.events{display:grid;gap:12px}
+.event{
+  display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:16px;
+  padding:16px 20px;border:1px solid var(--line);border-radius:14px;background:var(--surface);
+  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),border-color .25s ease;
+}
+.event:hover{transform:translateX(4px);box-shadow:var(--shadow-lift);border-color:var(--blue2)}
+.date{
+  background:var(--sky);color:var(--blue);border-radius:10px;
+  text-align:center;font-size:.65rem;font-weight:900;padding:8px 6px;
+}
+.date strong{display:block;font-size:1.2rem;color:var(--navy);line-height:1.1}
+.event-content h3{margin:0 0 4px;color:var(--navy);font-size:.95rem}
+.event-content p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.4}
+.event-timer {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.event-timer span {
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--sky);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   11. GALLERY
+   ========================================================= */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gallery-tile{
+  min-height:180px;border-radius:14px;border:1px solid var(--line);padding:16px;
+  display:flex;align-items:end;
+  background:linear-gradient(140deg,var(--surface2),var(--surface3));
+  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),border-color .25s ease;
+}
+.gallery-tile:hover{transform:translateY(-4px) scale(1.015);box-shadow:var(--shadow-lift);border-color:var(--blue2)}
+.gallery-tile:nth-child(2n){background:linear-gradient(140deg,var(--surface),var(--surface2))}
+.gallery-tile:nth-child(3n){background:linear-gradient(140deg,var(--surface3),var(--surface2))}
+.gallery-tile span{
+  background:var(--surface);border:1px solid var(--line);border-radius:8px;
+  padding:6px 10px;font-size:.75rem;font-weight:800;color:var(--navy);
+}
+
+/* =========================================================
+   12. MAMPIR
+   ========================================================= */
+.mampir-section {
+  width: calc(100% - 32px);
+  max-width: 1400px;
+  margin: 40px auto;
+  background: var(--blue);
+  border-radius: 32px;
+  padding: 100px 20px;
+  color: var(--btn-ink);
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(22,119,232,.2);
+}
+.mampir-section h2 {
+  color: var(--btn-ink);
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 20px;
+  letter-spacing: -0.03em;
+}
+.mampir-section p {
+  color: var(--btn-ink);
+  opacity: .85;
+  font-size: 1.1rem;
+  max-width: 650px;
+  margin: 0 auto 40px;
+}
+.mampir-section .btn {
+  background: var(--btn-ink);
+  color: var(--blue);
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  font-size: 1rem;
+  padding: 14px 28px;
+}
+.mampir-section .btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,.2);
+}
+
+/* Form block inside Mampir */
+.form-block{
+  margin: 40px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,.25);
+  max-width: 520px;
+  text-align: left;
+}
+html[data-theme="dark"] .form-block{border-top-color: rgba(0,0,0,.2)}
+.form-hint{
+  font-size: .9rem;
+  margin-bottom: 16px !important;
+  color: inherit;
+  opacity: .85;
+  text-align: center;
+}
+.pesan-form{display:grid;gap:12px}
+.pesan-form input,
+.pesan-form textarea{
+  width:100%;
+  padding:12px 16px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.2);
+  color:var(--btn-ink);
+  font-family:inherit;
+  font-size:.9rem;
+  transition:background .2s, border-color .2s;
+}
+html[data-theme="dark"] .pesan-form input,
+html[data-theme="dark"] .pesan-form textarea{
+  border-color:rgba(0,0,0,.15);
+  background:rgba(255,255,255,.55);
+}
+.pesan-form input::placeholder,
+.pesan-form textarea::placeholder{color:var(--btn-ink);opacity:.6}
+.pesan-form input:focus,
+.pesan-form textarea:focus{
+  outline:2px solid var(--btn-ink);
+  outline-offset:2px;
+  background:rgba(255,255,255,.3);
+}
+html[data-theme="dark"] .pesan-form input:focus,
+html[data-theme="dark"] .pesan-form textarea:focus{background:rgba(255,255,255,.75)}
+.pesan-form textarea{resize:vertical;min-height:80px}
+.pesan-form button{
+  justify-self:center;
+  background: var(--btn-ink);
+  color: var(--blue);
+  border:0;
+  border-radius:99px;
+  padding:12px 28px;
+  font-weight:800;
+  font-size:.9rem;
+  cursor:pointer;
+  transition: transform .25s var(--ease-out), box-shadow .25s, filter .2s;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+}
+.pesan-form button:hover:not(:disabled){
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 10px 24px rgba(0,0,0,.22);
+}
+.pesan-form button:disabled{opacity:.6;cursor:not-allowed}
+.form-status{
+  margin-top:12px;
+  font-size:.85rem;
+  font-weight:700;
+  min-height:1.3em;
+  text-align:center;
+}
+.form-status.success{color:#bbf7d0}
+.form-status.error{color:#fecaca}
+
+/* =========================================================
+   13. FAQ
+   ========================================================= */
+.faq{max-width: 800px; margin: 0 auto;}
+.faq p{margin:16px 0;font-size:.95rem;text-align: center;}
+.faq h2 {text-align: center; margin-bottom: 32px;}
+
+.faqs{display:grid;gap:10px}
+details{
+  border:1px solid var(--line);border-radius:12px;background:var(--surface);
+  padding:0 16px;
+  transition:box-shadow .3s ease,border-color .25s ease;
+}
+details:hover{border-color:var(--blue2)}
+details[open]{box-shadow:var(--shadow-lift);border-color:var(--blue2)}
+summary{
+  list-style:none;cursor:pointer;padding:16px 0;
+  font-size:.9rem;font-weight:800;color:var(--navy);
+  position:relative;transition:color .2s;
+}
+details:hover summary{color:var(--blue)}
+summary::-webkit-details-marker{display:none}
+summary:after{
+  content:'+';float:right;color:var(--blue);font-size: 1.2rem;line-height: 1;
+  transition:transform .3s var(--ease-out);
+  display:inline-block;font-weight:400;
+}
+details[open] summary:after{content:'−';transform:none}
+details p{font-size:.85rem;padding:0 0 16px;line-height:1.6;margin:0;text-align: left;}
+details[open] p{animation:fade-slide-down .35s var(--ease-out) both}
+@keyframes fade-slide-down{
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* =========================================================
+   14. FOOTER
+   ========================================================= */
+footer{
+  background:transparent;border-top:1px solid var(--line);
+  padding:32px 0;font-size:.75rem;color:var(--muted);
+}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.footlinks{display:flex;gap:16px;font-weight:600}
+
+/* =========================================================
+   15. UI FLOATING & DOTS
+   ========================================================= */
+.section-dots{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:12px;z-index:45;
+}
+.section-dots a{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--line);border:1px solid transparent;
+  transition:all .3s var(--ease-out);
+  position:relative;
+}
+.section-dots a::before{
+  content:attr(data-dot);position:absolute;right:20px;top:50%;
+  transform:translateY(-50%) translateX(6px);
+  font-size:.65rem;font-weight:800;color:var(--navy);
+  background:var(--surface);border:1px solid var(--line);
+  padding:4px 10px;border-radius:6px;white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:all .25s var(--ease-out);
+  text-transform:capitalize;
+}
+.section-dots a:hover::before{opacity:1;transform:translateY(-50%) translateX(0)}
+.section-dots a.active{
+  background:var(--blue);transform:scale(1.4);
+  box-shadow:0 0 0 4px rgba(22,119,232,.18);
+}
+.section-dots a:hover{background:var(--blue2);transform:scale(1.2)}
+
+.to-top{
+  position:fixed;right:16px;bottom:16px;z-index:35;
+  width:44px;height:44px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid var(--line);background:var(--surface);color:var(--navy);
+  font-size:1rem;cursor:pointer;box-shadow:var(--shadow-s);
+  opacity:0;pointer-events:none;transform:translateY(12px);
+  transition:opacity .3s,transform .3s var(--ease-out),box-shadow .2s;
+}
+.to-top.show{opacity:1;pointer-events:auto;transform:none}
+.to-top:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+
+/* Floating WhatsApp */
+.wa-float{
+  position:fixed;right:16px;bottom:72px;z-index:35;
+  width:48px;height:48px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#25D366;color:#fff;
+  box-shadow:0 8px 24px rgba(37,211,102,.45);
+  transition:transform .3s var(--ease-out),box-shadow .3s;
+}
+.wa-float:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 12px 28px rgba(37,211,102,.6)}
+.wa-float svg{width:24px;height:24px}
+
+.lazy-img{opacity:0;transition:opacity .5s ease}
+.lazy-img.loaded{opacity:1}
+.reveal{
+  opacity:0;transform:translateY(15px);
+  transition:opacity .6s ease,transform .6s var(--ease-out);
+  transition-delay:var(--d,0ms);
+  will-change:opacity,transform;
+}
+.reveal.in{opacity:1;transform:none}
+
+/* =========================================================
+   16. RESPONSIVE
+   ========================================================= */
+@media(max-width:1000px){
+  .links{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    justify-content: flex-start;
+    background: var(--header);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    padding: 0 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .4s ease-in-out, opacity .3s ease, padding .3s ease;
+  }
+  .links.open{
+    max-height: 400px;
+    padding: 10px;
+    opacity: 1;
+  }
+  .links a{
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: .9rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all .3s ease;
+  }
+  .links.open a {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .links.open a:nth-child(1) { transition-delay: 0.05s; }
+  .links.open a:nth-child(2) { transition-delay: 0.1s; }
+  .links.open a:nth-child(3) { transition-delay: 0.15s; }
+  .links.open a:nth-child(4) { transition-delay: 0.2s; }
+  .links.open a:nth-child(5) { transition-delay: 0.25s; }
+  .links.open a:nth-child(6) { transition-delay: 0.3s; }
+
+  .links a:hover{background:var(--surface2);color:var(--blue)}
+  .links a.active{background:var(--surface2)}
+  .menu{display:grid}
+  .section-dots{display:none}
+}
+@media(max-width:850px){
+  .hero-grid{gap:32px}
+  .about{grid-template-columns:1fr}
+  .ruang-grid{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .container{width:calc(100% - 28px)}
+  nav.mainnav{height:60px}
+  .brand img{width:32px;height:32px}
+  .brand{font-size:12px}
+
+  .hero{padding:24px 0 40px;text-align:left}
+  .hero-grid{display:grid;grid-template-columns:1fr 110px;gap:8px 16px;align-items:start}
+  .hero-grid > div:first-child{display:contents}
+  
+  .hero-grid .eyebrow{grid-column:1;grid-row:1;justify-self:start;font-size:0.6rem;padding:4px 10px;margin-bottom:2px;white-space:nowrap}
+  .hero-grid .hero-title{grid-column:1;grid-row:2;margin:0;font-size:clamp(2.2rem,10vw,2.8rem);line-height:1;letter-spacing:0.06em}
+  .hero-grid .hero-title span{display:block;font-size:0.6em;margin-top:2px;color:var(--blue);letter-spacing:0}
+  
+  .hero-grid .hero-slogan,
+  .hero-grid .hero-trans,
+  .hero-grid p,
+  .hero-grid .actions{grid-column:1 / -1}
+  
+  .hero-grid .hero-slogan{font-size:1.05rem;margin-top:10px;margin-bottom:0;line-height:1.1}
+  .hero-grid .hero-trans{font-size:0.85rem;margin-top:2px;margin-bottom:12px;line-height:1.3}
+  .hero-grid p{font-size:0.9rem;line-height:1.5;margin:0}
+  .hero-grid .actions{justify-content:flex-start;margin-top:16px}
+  
+  .hero-grid .art{grid-column:2;grid-row:1 / span 2;order:0;min-height:auto;display:block;width:110px}
+  .hero-grid .logo-card{width:100%;aspect-ratio:1/1;border-radius:20px;margin:0;transform:none}
+  .hero-grid .orb{display:none}
+  .hero-grid .c1,.hero-grid .c2{display:none}
+
+  h1{font-size:clamp(2rem,8vw,2.5rem)}
+  h2{font-size:1.5rem;margin:6px 0 12px}
+  
+  .head{display:block;text-align:center;margin-bottom:24px}
+  .head p{margin-top:12px;margin-inline:auto;}
+  
+  .section{padding:48px 0}
+  .principles{grid-template-columns:1fr; gap:20px;}
+
+  .event{grid-template-columns:52px 1fr;gap:12px;padding:12px 16px}
+  .date{padding:6px}
+  .date strong{font-size:1.1rem}
+  .event-timer{grid-column: 2;}
+
+  .gallery{grid-template-columns:1fr;gap:12px}
+  .gallery-tile{min-height:140px}
+  
+  .mampir-section { 
+    width: calc(100% - 20px);
+    border-radius: 24px; 
+    padding: 60px 16px; 
+    margin: 20px auto;
+  }
+
+  .foot{flex-direction:column;text-align:center;gap:16px}
+  .footlinks{justify-content:center;flex-wrap:wrap;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+  html{scroll-behavior:auto}
+  .reveal{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<nav class="section-dots" aria-label="Navigasi section">
+  <a href="#home"     data-dot="home"     aria-label="Beranda"></a>
+  <a href="#tentang"  data-dot="tentang"  aria-label="Tentang"></a>
+  <a href="#ruang"    data-dot="ruang"    aria-label="Ruang"></a>
+  <a href="#agenda"   data-dot="agenda"   aria-label="Agenda"></a>
+  <a href="#arsip"    data-dot="arsip"    aria-label="Arsip"></a>
+</nav>
+
+<header class="top">
+  <div class="container">
+    <nav class="mainnav">
+      <a class="brand" href="#home">
+        <img class="lazy-img" src="assets/logo-arcane.png" alt="Logo ARCANE" loading="eager" decoding="async" width="36" height="36">
+        <span>ARCANE<br><small>COMMUNITY</small></span>
+      </a>
+
+      <div class="links" id="links">
+        <a href="#home">Beranda</a>
+        <a href="#tentang">Tentang</a>
+        <a href="#ruang">Ruang</a>
+        <a href="#agenda">Agenda</a>
+        <a href="#arsip">Arsip</a>
+        <a href="#mampir">Mampir</a>
+      </div>
+
+      <div class="nav-tools">
+        <button class="icon-btn" id="themeToggle" aria-label="Ganti tema">🌙</button>
+        <button class="icon-btn menu" id="menuBtn" aria-label="Buka menu" aria-expanded="false" aria-controls="links">☰</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <span class="eyebrow">Berdiri sejak 2025</span>
+        <h1 class="hero-title">ARCANE <span>Community</span></h1>
+        <div class="hero-slogan">causa latet, vis est notissima</div>
+        <div class="hero-trans">Sebabnya tersembunyi — kekuatannya dikenal.</div>
+        <p>Kami mengumpulkan dan menyebarkan informasi yang berguna. Tidak selalu terlihat, tapi dampaknya nyata. Sebuah ruang tenang untuk berbagi, berkarya, dan bertumbuh bersama.</p>
+        <div class="actions">
+          <a class="btn" href="#agenda">Lihat Agenda</a>
+        </div>
+      </div>
+      <div class="art reveal">
+        <div class="orb"></div>
+        <div class="logo-card" id="logoCard">
+          <img class="lazy-img" src="assets/logo-arcane.png" alt="ARCANE Community" loading="eager" decoding="async">
+        </div>
+        <div class="chip c1">
+          <span>Base</span>
+          <small>Pusat Koordinasi</small>
+        </div>
+        <div class="chip c2">
+          <span>Legion & Dominion</span>
+          <small>Ruang Bermain</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tentang">
+    <div class="container about">
+      <div class="reveal">
+        <div class="kicker">Tentang Kami</div>
+        <h2>Bukan Sekadar Wadah</h2>
+        <p>ARCANE awalnya hanyalah lingkaran kecil di satu kelas. Seiring waktu, ia berubah menjadi ruang bagi siapa saja yang ingin mencari tahu, berbagi informasi, dan membangun pertemanan yang positif.</p>
+        <p>Kami percaya bahwa hal-hal besar sering kali dimulai dari langkah kecil yang tidak banyak disorot. Itulah cara kami bekerja.</p>
+      </div>
+      <div class="principles">
+        <article class="principle reveal">
+          <span class="num">01 / INFORMASI</span>
+          <h3>Mencari & Menyebarkan</h3>
+          <p>Memverifikasi hal yang berguna sebelum disebarkan.</p>
+        </article>
+        <article class="principle reveal">
+          <span class="num">02 / SOLIDARITAS</span>
+          <h3>Tanpa Peringkat</h3>
+          <p>Yang tahu membagikan, yang belum tahu bertanya.</p>
+        </article>
+        <article class="principle reveal">
+          <span class="num">03 / RITME</span>
+          <h3>Mengikuti Waktu</h3>
+          <p>Bergerak menyesuaikan agenda sekolah dan waktu luang.</p>
+        </article>
+        <article class="principle reveal">
+          <span class="num">04 / TENANG</span>
+          <h3>Fokus Dampak</h3>
+          <p>Bukan sorotan. Yang penting hasilnya nyata.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ruang">
+    <div class="container">
+      <div class="head reveal">
+        <div>
+          <div class="kicker">Titik Kumpul</div>
+          <h2>Ruang Kami</h2>
+        </div>
+        <p>Tiga ruang yang menjadi tempat kami berkoordinasi dan bermain.</p>
+      </div>
+      <div class="ruang-grid">
+        <article class="ruang-card reveal">
+          <div class="ruang-icon">🛰️</div>
+          <h3>ARCANE Base</h3>
+          <p>Pusat koordinasi utama. Semua agenda, pengumuman, dan penghubung antar anggota berkumpul di sini.</p>
+          <span class="status-badge active">Aktif</span>
+        </article>
+        <article class="ruang-card reveal">
+          <div class="ruang-icon">🎮</div>
+          <h3>ARCANE Legion</h3>
+          <p>Cabang untuk Mobile Legends. Hidup saat ada agenda mabar bersama, dan kembali tenang setelahnya.</p>
+          <span class="status-badge">Saat Agenda</span>
+        </article>
+        <article class="ruang-card reveal">
+          <div class="ruang-icon">🔫</div>
+          <h3>ARCANE Dominion</h3>
+          <p>Cabang untuk Free Fire. Ritmenya menyesuaikan waktu luang dari para pengurus komunitas.</p>
+          <span class="status-badge">Saat Agenda</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="agenda">
+    <div class="container">
+      <div class="head reveal">
+        <div>
+          <div class="kicker">Waktu</div>
+          <h2>Agenda Mendatang</h2>
+        </div>
+        <p>Catat tanggalnya. Kami menyesuaikan ritme dengan agenda sekolah.</p>
+      </div>
+
+      <div class="events">
+        <article class="event reveal" data-date="2026-11-26T19:00:00+07:00">
+          <div class="date"><strong>26</strong><span>NOV</span></div>
+          <div class="event-content">
+            <h3>Mabar bareng</h3>
+            <p>Mabar rutin 5 tahun sekali.</p>
+            <div class="event-timer" data-timer></div>
+          </div>
+        </article>
+        <article class="event reveal" data-date="2026-11-28T20:00:00+07:00">
+          <div class="date"><strong>28</strong><span>NOV</span></div>
+          <div class="event-content">
+            <h3>Makan bareng</h3>
+            <p>Penuhi perutmu, makan bareng bersama kami.</p>
+            <div class="event-timer" data-timer></div>
+          </div>
+        </article>
+        <article class="event reveal" data-date="2026-12-05T19:00:00+07:00">
+          <div class="date"><strong>05</strong><span>DES</span></div>
+          <div class="event-content">
+            <h3>jalan jalan</h3>
+            <p>disaat lelah motoran disitu kita jalan jalan.</p>
+            <div class="event-timer" data-timer></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="arsip">
+    <div class="container">
+      <div class="head reveal">
+        <div>
+          <div class="kicker">Jejak</div>
+          <h2>Arsip Kegiatan</h2>
+        </div>
+        <p>Beberapa momen yang pernah kami lalui bersama.</p>
+      </div>
+      <div class="gallery">
+        <div class="gallery-tile reveal"><span>Kumpul Komunitas</span></div>
+        <div class="gallery-tile reveal"><span>Mabar Legion</span></div>
+        <div class="gallery-tile reveal"><span>Diskusi Mingguan</span></div>
+        <div class="gallery-tile reveal"><span>Proyek Pertama</span></div>
+        <div class="gallery-tile reveal"><span>Anniversary 1</span></div>
+        <div class="gallery-tile reveal"><span>Di Balik Layar</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mampir -->
+  <section class="mampir-section" id="mampir">
+    <div class="container reveal">
+      <h2>Kami tidak merekrut.<br>Pintunya cuma tidak dikunci.</h2>
+      <p>ARCANE adalah komunitas mandiri, tidak terafiliasi resmi dengan sekolah. Tidak ada iuran wajib, tidak ada syarat akun game. Kalau kamu tertarik, cukup tanya admin lewat WhatsApp.</p>
+      <a class="btn" href="https://wa.me/6289654315411?text=Halo%20Admin%20ARCANE" target="_blank" rel="noopener noreferrer">Tanya Admin via WA ↗</a>
+
+      <div class="form-block">
+        <p class="form-hint">Atau tinggalkan pesan langsung di sini (masuk ke database komunitas):</p>
+        <form id="pesanForm" class="pesan-form" novalidate>
+          <input type="text" name="nama" id="pesanNama" placeholder="Nama kamu" maxlength="80" required autocomplete="name">
+          <textarea name="pesan" id="pesanIsi" placeholder="Pesan kamu..." rows="3" maxlength="1000" required></textarea>
+          <!-- Honeypot anti-spam: jangan diisi -->
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <button type="submit" id="pesanSubmit">Kirim Pesan</button>
+        </form>
+        <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="container faq">
+      <div class="reveal">
+        <div class="kicker" style="text-align:center">Tanya Jawab</div>
+        <h2>Perlu Tahu</h2>
+        <p>Beberapa jawaban singkat untuk hal-hal yang biasanya ditanyakan.</p>
+        <div class="faqs">
+          <details><summary>Apa yang sebenarnya ARCANE kerjakan?</summary><p>Madang, Ngising, Turu, Nyo- ntek.</p></details>
+          <details><summary>Apakah harus punya akun Mobile Legends / Free Fire?</summary><p>Ndue pun Ra dienggo, ketuane Ra becus🗿.</p></details>
+          <details><summary>Apakah ARCANE berbayar?</summary><p>Berbayar nggo makan admin.</p></details>
+          <details><summary>Apakah terafiliasi resmi dengan sekolah?</summary><p>Bukannya sombong tapi ARCANE itu komunitas mandiri anjass.</p></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container foot">
+    <div>© <span id="year"></span> ARCANE Community. <span style="font-style:italic;">causa latet, vis est notissima.</span></div>
+    <div class="footlinks">
+      <a href="#tentang">Tentang</a>
+      <a href="#ruang">Ruang</a>
+      <a href="#agenda">Agenda</a>
+      <a href="#home">Ke atas ↑</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Floating WhatsApp -->
+<a class="wa-float" href="https://wa.me/6289654315411?text=Halo%20Admin%20ARCANE" target="_blank" rel="noopener noreferrer" aria-label="Chat WhatsApp Admin">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<button class="to-top" id="toTop" aria-label="Kembali ke atas">↑</button>
+
+<script>
+(function () {
+  "use strict";
+
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* THEME */
+  var root = document.documentElement;
+  var themeToggle = document.getElementById('themeToggle');
+  var metaTheme = document.querySelector('meta[name="theme-color"]');
+
+  function setTheme(t) {
+    root.setAttribute('data-theme', t);
+    if (themeToggle) themeToggle.textContent = t === 'dark' ? '☀️' : '🌙';
+    if (metaTheme) metaTheme.setAttribute('content', t === 'dark' ? '#081321' : '#f4faff');
+    store.set('arcane-theme', t);
+  }
+
+  var savedTheme = store.get('arcane-theme', null);
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  /* TIMER PER CARD */
+  var eventCards = document.querySelectorAll('.event[data-date]');
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function updateTimers() {
+    var now = Date.now();
+    eventCards.forEach(function(card) {
+      var timerEl = card.querySelector('[data-timer]');
+      if (!timerEl) return;
+      var targetTime = new Date(card.dataset.date).getTime();
+      var diff = targetTime - now;
+      if (diff <= 0) {
+        timerEl.innerHTML = '<span>Sedang berlangsung / Selesai</span>';
+        return;
+      }
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      timerEl.innerHTML =
+        (d > 0 ? '<span>' + d + 'h</span>' : '') +
+        '<span>' + pad(h) + 'j</span>' +
+        '<span>' + pad(m) + 'm</span>' +
+        '<span>' + pad(s) + 'd</span>';
+    });
+  }
+  if (eventCards.length > 0) {
+    updateTimers();
+    setInterval(updateTimers, 1000);
+  }
+
+  /* 3D TILT */
+  var logoCard = document.getElementById('logoCard');
+  var hasFinePointer = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (logoCard && hasFinePointer && !prefersReduced) {
+    logoCard.addEventListener('mousemove', function (e) {
+      var r = logoCard.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - 0.5;
+      var y = (e.clientY - r.top) / r.height - 0.5;
+      logoCard.style.transition = 'transform .05s linear, box-shadow .4s ease';
+      logoCard.style.transform =
+        'perspective(900px) rotateY(' + (x * 10) + 'deg) rotateX(' + (-y * 10) + 'deg)';
+    });
+    logoCard.addEventListener('mouseleave', function () {
+      logoCard.style.transition = 'transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease';
+      logoCard.style.transform = 'perspective(900px) rotateY(0) rotateX(0)';
+    });
+  }
+
+  /* MOBILE NAV */
+  var navLinks = document.getElementById('links');
+  var menuBtn = document.getElementById('menuBtn');
+
+  function closeNav() {
+    if (!navLinks) return;
+    navLinks.classList.remove('open');
+    if (menuBtn) {
+      menuBtn.textContent = '☰';
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  if (menuBtn && navLinks) {
+    menuBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = navLinks.classList.toggle('open');
+      menuBtn.textContent = open ? '✕' : '☰';
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    navLinks.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', closeNav);
+    });
+    document.addEventListener('click', function (e) {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !menuBtn.contains(e.target)) closeNav();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeNav();
+    });
+  }
+
+  /* LAZY IMAGE */
+  document.querySelectorAll('img.lazy-img').forEach(function (img) {
+    var done = function () { img.classList.add('loaded'); };
+    if (img.complete && img.naturalWidth > 0) done();
+    else {
+      img.addEventListener('load', done);
+      img.addEventListener('error', done);
+    }
+  });
+
+  /* REVEAL ON SCROLL */
+  document.querySelectorAll('.reveal').forEach(function (el) {
+    var parent = el.parentElement;
+    if (!parent) return;
+    var sibs = Array.prototype.filter.call(parent.children, function (c) {
+      return c.classList && c.classList.contains('reveal');
+    });
+    var idx = sibs.indexOf(el);
+    if (idx > 0) el.style.setProperty('--d', (idx * 60) + 'ms');
+  });
+
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* SCROLL-SPY */
+  var SECTION_IDS = ['home', 'tentang', 'ruang', 'agenda', 'arsip', 'mampir', 'faq'];
+  var navMap = {};
+  var dotMap = {};
+
+  SECTION_IDS.forEach(function (id) {
+    var navLink = document.querySelector('.links a[href="#' + id + '"]');
+    if (navLink) navMap[id] = navLink;
+    var dot = document.querySelector('.section-dots a[data-dot="' + id + '"]');
+    if (dot) dotMap[id] = dot;
+  });
+
+  function setActive(id) {
+    Object.keys(navMap).forEach(function (k) { navMap[k].classList.remove('active'); });
+    Object.keys(dotMap).forEach(function (k) { dotMap[k].classList.remove('active'); });
+    if (navMap[id]) navMap[id].classList.add('active');
+    if (dotMap[id]) dotMap[id].classList.add('active');
+  }
+
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        setActive(e.target.id);
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+    SECTION_IDS.forEach(function (id) {
+      var sec = document.getElementById(id);
+      if (sec) spy.observe(sec);
+    });
+  }
+
+  /* SCROLL PROGRESS + TO-TOP */
+  var progress = document.getElementById('progress');
+  var toTop = document.getElementById('toTop');
+  var ticking = false;
+
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    if (progress) progress.style.width = pct + '%';
+    if (toTop) toTop.classList.toggle('show', h.scrollTop > 300);
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  if (toTop) {
+    toTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  var yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+})();
+</script>
+
+<!-- ============================================================
+     FIREBASE — Form → Firestore (koleksi "pesan")
+     ============================================================ -->
+<script type="module">
+  import { db, collection, addDoc, serverTimestamp } from './firebase-config.js';
+
+  const form   = document.getElementById('pesanForm');
+  const status = document.getElementById('formStatus');
+  const btn    = document.getElementById('pesanSubmit');
+
+  if (form && status && btn) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Honeypot anti-spam
+      const honey = form.querySelector('[name="website"]');
+      if (honey && honey.value) {
+        form.reset();
+        status.textContent = 'Pesan terkirim. Terima kasih!';
+        status.className = 'form-status success';
+        return;
+      }
+
+      const nama  = form.nama.value.trim();
+      const pesan = form.pesan.value.trim();
+
+      if (!nama || !pesan) {
+        status.textContent = 'Nama dan pesan wajib diisi.';
+        status.className = 'form-status error';
+        return;
+      }
+      if (nama.length > 80 || pesan.length > 1000) {
+        status.textContent = 'Nama max 80 karakter, pesan max 1000 karakter.';
+        status.className = 'form-status error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Mengirim…';
+      status.textContent = '';
+      status.className = 'form-status';
+
+      try {
+        await addDoc(collection(db, 'pesan'), {
+          nama: nama,
+          pesan: pesan,
+          createdAt: serverTimestamp(),
+          userAgent: navigator.userAgent.slice(0, 200)
+        });
+        form.reset();
+        status.textContent = 'Pesan terkirim. Terima kasih!';
+        status.className = 'form-status success';
+      } catch (err) {
+        console.error('[Firestore] Gagal menyimpan pesan:', err);
+        status.textContent = 'Gagal mengirim. Coba lagi, atau hubungi admin via WhatsApp.';
+        status.className = 'form-status error';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Kirim Pesan';
+      }
+    });
+  }
+</script>
+</body>
+</html>
