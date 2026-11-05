@@ -1,18 +1,24 @@
-// firebase-config.js
-// Konfigurasi Firebase ARCANE Community
-// API key di client-side memang aman untuk Firebase — keamanan lewat Firestore Rules.
+// firebase-config.js — shared antara ARCANE & SAGARA
+// API key publik by design. Keamanan lewat Firestore Rules + Firebase Auth.
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+
 import {
   getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs,
-  query,
-  orderBy,
-  limit
+  collection, addDoc, setDoc, doc, updateDoc, deleteDoc,
+  getDocs, getDoc,
+  query, orderBy, limit, onSnapshot,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDWl0VFu_a7z4kBiR50vsEAoV3oPisfZHA",
@@ -24,6 +30,20 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-export { db, collection, addDoc, serverTimestamp, getDocs, query, orderBy, limit };
+// Pastikan sesi login bertahan setelah reload (default, tapi eksplisit lebih aman)
+setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+export {
+  db, auth,
+  // Firestore — CRUD
+  collection, addDoc, setDoc, doc, updateDoc, deleteDoc,
+  getDocs, getDoc,
+  // Firestore — query & realtime
+  query, orderBy, limit, onSnapshot,
+  serverTimestamp,
+  // Auth
+  signInWithEmailAndPassword, signOut, onAuthStateChanged
+};
