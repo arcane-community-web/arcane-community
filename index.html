@@ -73,7 +73,7 @@ nav.mainnav{height:64px;display:flex;align-items:center;justify-content:space-be
 .links a.active::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--blue);border-radius:2px}
 .nav-tools{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .icon-btn{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;cursor:pointer;background:var(--surface);border:1px solid var(--line);color:var(--navy);font-size:.9rem;transition:transform .35s var(--ease-out),box-shadow .2s,background .3s}
-#themeToggle:hover{transform:rotate(180deg) scale(1.05);box-shadow:var(--shadow-s)}
+#themeToggle:hover{transform:rotate(360deg) scale(1.05);box-shadow:var(--shadow-s)}
 #searchBtn:hover{transform:scale(1.06);box-shadow:var(--shadow-s)}
 .icon-btn:active{transform:scale(.95)}
 
@@ -812,9 +812,7 @@ html[data-theme="dark"] .palette-backdrop{background:rgba(0,0,0,.55)}
     var ICON_DONE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
 
     function isAuthed(){ return !!window.__arcaneCurrentUser; }
-function isAdmin(){ return !!(window.__arcaneCurrentUser && window.__arcaneCurrentUser.role === 'admin'); }
-    function isAuthed(){ return !!getRole(); }
-    function isAdmin(){ return getRole()==='admin'; }
+    function isAdmin(){ return !!(window.__arcaneCurrentUser && window.__arcaneCurrentUser.role === 'admin'); }
 
     /* ============ LUCIDE ============ */
     if (window.lucide) {
@@ -874,17 +872,11 @@ function isAdmin(){ return !!(window.__arcaneCurrentUser && window.__arcaneCurre
       document.body.classList.toggle('is-member', m);
       if (!a) { exitEditMode(); exitSelectionMode(); }
     }
-        function setRole(role){
-      // ... isi ...
-      if (!a) { exitEditMode(); exitSelectionMode(); }
-    }
 
     window.__arcaneApplyAuth = function(user){
       window.__arcaneCurrentUser = user;
       setRole(user ? user.role : null);
     };
-
-    function showLogin(){ loginView.hidden = false; ... }
 
     /* ============ TIMERS ============ */
     function pad(n){ return String(n).padStart(2,'0'); }
