@@ -1,0 +1,367 @@
+<!-- File: fitur-lama.html -->
+<!-- Sistem Search SAGARA (expand overlay) + data ARCANE lengkap -->
+
+<div data-feature="fitur-search-001">
+  <div class="arcane-search-panel" id="arcaneSearchPanel">
+    <div class="arcane-search-inner">
+      <div class="arcane-search-field">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <input type="text" id="arcaneSearchInput" placeholder="Cari section, kartu, atau akun…" autocomplete="off" aria-label="Cari">
+      </div>
+      <ul class="arcane-search-results" id="arcaneSearchResults" role="listbox"></ul>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Panel melayang di bawah navbar (bukan melebar header) */
+.arcane-search-panel{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 39;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+  transition: grid-template-rows .45s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+}
+.arcane-search-panel > *{ overflow: hidden; min-height: 0; }
+.arcane-search-panel.open{
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.arcane-search-inner{
+  padding: 16px 0 20px;
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.arcane-search-field{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: border-color .2s, box-shadow .2s;
+}
+.arcane-search-field:focus-within{
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(22,119,232,.15);
+}
+html[data-theme="dark"] .arcane-search-field:focus-within{
+  box-shadow: 0 0 0 3px rgba(90,171,255,.2);
+}
+.arcane-search-field svg{
+  width: 18px; height: 18px;
+  fill: none; stroke: var(--muted);
+  stroke-width: 2.2; stroke-linecap: round;
+  flex-shrink: 0;
+}
+.arcane-search-field input{
+  flex: 1; border: none; background: transparent; outline: none;
+  color: var(--ink); font-family: inherit;
+  font-size: .92rem; font-weight: 500; padding: 0;
+}
+.arcane-search-field input::placeholder{ color: var(--muted); opacity: .7; }
+
+.arcane-search-results{
+  margin: 12px 0 0; padding: 0; list-style: none;
+  display: grid; gap: 2px;
+  max-height: 280px; overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.arcane-search-results::-webkit-scrollbar{ width: 6px; }
+.arcane-search-results::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 3px; }
+
+.arcane-search-item{
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: background .15s, color .15s;
+}
+.arcane-search-item:hover,
+.arcane-search-item.active{ background: var(--surface2); }
+
+.arcane-search-item-body{
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.arcane-search-item-label{
+  font-size: .55rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1;
+  opacity: .8;
+}
+.arcane-search-item:hover .arcane-search-item-label,
+.arcane-search-item.active .arcane-search-item-label{ color: var(--blue2); }
+
+.arcane-search-item-title{
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+.arcane-search-item:hover .arcane-search-item-title,
+.arcane-search-item.active .arcane-search-item-title{ color: var(--blue); }
+
+.arcane-search-empty{
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .82rem;
+  letter-spacing: .02em;
+}
+
+@media(max-width:650px){
+  .arcane-search-inner{ padding: 12px 0 16px; width: calc(100% - 24px); }
+  .arcane-search-results{ max-height: 220px; }
+}
+</style>
+
+<script>
+window.initArcaneFeature = function() {
+  var panel = document.getElementById('arcaneSearchPanel');
+  var input = document.getElementById('arcaneSearchInput');
+  var resultsEl = document.getElementById('arcaneSearchResults');
+  if (!panel || !input || !resultsEl) return;
+
+  var isOpen = false;
+  var activeIdx = 0;
+  var filteredData = [];
+  var allData = [];
+
+  /* ── Baca semua data: section + semua kartu + login ── */
+  function buildSearchData() {
+    var list = [
+      { type: 'section', label: 'Beranda', kw: 'home beranda awal hero arcan community', href: '#home',    group: 'Beranda' },
+      { type: 'section', label: 'Tentang', kw: 'tentang about prinsip informasi solidaritas', href: '#tentang', group: 'Tentang' },
+      { type: 'section', label: 'Ruang',   kw: 'ruang base legion dominion mabar', href: '#ruang',   group: 'Ruang' },
+      { type: 'section', label: 'Agenda',  kw: 'agenda jadwal schedule event acara', href: '#agenda',  group: 'Agenda' },
+      { type: 'section', label: 'Arsip',   kw: 'arsip galeri archive foto gallery', href: '#arsip',   group: 'Arsip' },
+      { type: 'section', label: 'Mampir',  kw: 'mampir kontak wa whatsapp hubungi admin', href: '#mampir',  group: 'Mampir' },
+      { type: 'section', label: 'FAQ',     kw: 'faq tanya jawab pertanyaan', href: '#faq',     group: 'FAQ' }
+    ];
+
+    // Baca semua kartu di halaman
+    var cards = document.querySelectorAll('[data-card]');
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var sec = card.closest ? card.closest('section') : null;
+      var secId = sec ? sec.id : '';
+      if (!secId) continue;
+
+      var title = '';
+      var desc = '';
+
+      if (card.classList.contains('faq-item')) {
+        var summary = card.querySelector('summary');
+        var faqBody = card.querySelector('p');
+        title = summary ? summary.textContent : '';
+        desc = faqBody ? faqBody.textContent : '';
+      } else if (card.classList.contains('gallery-tile')) {
+        var sp = card.querySelector('span');
+        if (sp) {
+          var txt = '';
+          for (var j = 0; j < sp.childNodes.length; j++) {
+            if (sp.childNodes[j].nodeType === 3) txt += sp.childNodes[j].textContent;
+          }
+          title = txt.trim();
+        }
+        desc = card.getAttribute('data-kategori') || '';
+      } else {
+        var h = card.querySelector('h3');
+        var p = card.querySelector('p');
+        title = h ? h.textContent : '';
+        desc = p ? p.textContent : '';
+      }
+
+      if (!title) continue;
+
+      // Label grup = nama section asalnya
+      var groupLabel = secId;
+      for (var k = 0; k < list.length; k++) {
+        if (list[k].type === 'section' && list[k].href === '#' + secId) {
+          groupLabel = list[k].label;
+          break;
+        }
+      }
+
+      list.push({
+        type: 'card',
+        label: title,
+        kw: desc,
+        href: '#' + secId,
+        cardId: card.getAttribute('data-id') || '',
+        group: groupLabel
+      });
+    }
+
+    // Login (hanya kalau belum auth)
+    if (!window.__arcaneCurrentUser) {
+      list.push({
+        type: 'account',
+        label: 'Login',
+        kw: 'login masuk signin auth akun admin member pengurus',
+        href: '#/login',
+        group: 'Akun'
+      });
+    }
+
+    return list;
+  }
+
+  function openSearch() {
+    if (isOpen) return;
+    isOpen = true;
+    allData = buildSearchData(); // Build ulang setiap buka (biar kartu baru ikut)
+    panel.classList.add('open');
+    input.value = '';
+    render('');
+  }
+
+  function closeSearch() {
+    if (!isOpen) return;
+    isOpen = false;
+    panel.classList.remove('open');
+  }
+
+  function navigateTo(item) {
+    closeSearch();
+
+    // Kartu → scroll ke kartu spesifik + flash
+    if (item.type === 'card' && item.cardId) {
+      var target = document.querySelector('[data-card][data-id="' + item.cardId + '"]');
+      if (target) {
+        if (history.replaceState) history.replaceState(null, '', item.href);
+        else location.hash = item.href.slice(1);
+        setTimeout(function(){
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.classList.add('is-flash');
+          setTimeout(function(){ target.classList.remove('is-flash'); }, 1600);
+        }, 100);
+        return;
+      }
+    }
+
+    // Login
+    if (item.type === 'account') {
+      location.hash = '#/login';
+      return;
+    }
+
+    // Section
+    var sec = document.querySelector(item.href);
+    if (sec) {
+      if (history.replaceState) history.replaceState(null, '', item.href);
+      else location.hash = item.href.slice(1);
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function render(q) {
+    q = (q || '').trim().toLowerCase();
+    filteredData = !q ? allData : allData.filter(function(c) {
+      var titleLower = c.label.toLowerCase();
+      var kwLower = (c.kw || '').toLowerCase();
+      return titleLower.indexOf(q) !== -1 || kwLower.indexOf(q) !== -1;
+    });
+    filteredData = filteredData.slice(0, 50);
+    activeIdx = 0;
+    resultsEl.innerHTML = '';
+
+    if (!filteredData.length) {
+      resultsEl.innerHTML = '<li class="arcane-search-empty">Tidak ada hasil.</li>';
+      return;
+    }
+
+    filteredData.forEach(function(item, i) {
+      var li = document.createElement('li');
+      li.className = 'arcane-search-item' + (i === 0 ? ' active' : '');
+      li.setAttribute('role', 'option');
+
+      var body = document.createElement('div');
+      body.className = 'arcane-search-item-body';
+
+      var lbl = document.createElement('div');
+      lbl.className = 'arcane-search-item-label';
+      lbl.textContent = item.group;
+      body.appendChild(lbl);
+
+      var ttl = document.createElement('div');
+      ttl.className = 'arcane-search-item-title';
+      ttl.textContent = item.label;
+      body.appendChild(ttl);
+
+      li.appendChild(body);
+
+      li.addEventListener('click', function() { navigateTo(item); });
+      li.addEventListener('mousemove', function() { if (activeIdx !== i) setActive(i); });
+      resultsEl.appendChild(li);
+    });
+  }
+
+  function setActive(i) {
+    if (!filteredData.length) return;
+    activeIdx = (i + filteredData.length) % filteredData.length;
+    var items = resultsEl.querySelectorAll('.arcane-search-item');
+    items.forEach(function(el, idx) { el.classList.toggle('active', idx === activeIdx); });
+    if (items[activeIdx] && items[activeIdx].scrollIntoView) {
+      items[activeIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIdx + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIdx - 1); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      var item = filteredData[activeIdx];
+      if (item) navigateTo(item);
+    }
+    else if (e.key === 'Escape') { closeSearch(); }
+  });
+  input.addEventListener('input', function() { render(input.value); });
+
+  /* Toggle via klik area kosong navbar */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest) return;
+    if (e.target.closest('.arcane-search-panel')) return;
+    if (document.body.classList.contains('search-open')) return;
+
+    if (e.target.closest('.mainnav')) {
+      var isInteractive = e.target.closest('a, button, input, textarea');
+      if (isInteractive) { if (isOpen) closeSearch(); return; }
+      if (isOpen) closeSearch(); else openSearch();
+      return;
+    }
+
+    if (isOpen) closeSearch();
+  });
+
+  /* Escape key global */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && isOpen) closeSearch();
+  });
+};
+</script>
